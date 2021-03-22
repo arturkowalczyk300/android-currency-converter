@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -16,6 +17,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText etPLN;
     Button btnClear;
     Button btnConvert;
+
+    //other variables
+    final float USD2PLN = (1.0f/3.89f);
+    final float USD2EUR = (1.0f/0.84f);
+    final float EUR2PLN = (1.0f/4.62f);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +50,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 etPLN.setText("");
                 break;
             case R.id.buttonConvert:
-                boolean enteredUSD
+
+                if(!etUSD.getText().equals(""))
+                {
+                    float USD = Float.parseFloat(etUSD.getText().toString());
+                    float PLN = USD * USD2PLN;
+                    float EUR = USD * USD2EUR;
+                    etPLN.setText(Float.toString(PLN));
+                    etEUR.setText(Float.toString(EUR));
+                }
+                else if(!etEUR.getText().equals(""))
+            {
+                float EUR = Float.parseFloat(etEUR.getText().toString());
+                float PLN = EUR * EUR2PLN;
+                float USD = EUR * (1.0f/USD2EUR);
+                etUSD.setText(Float.toString(USD));
+                etPLN.setText(Float.toString(PLN));
+            }
+                else if(!etEUR.getText().equals(""))
+                {
+                    float PLN = Float.parseFloat(etPLN.getText().toString());
+                    float EUR = PLN * (1.0f/EUR2PLN);
+                    float USD = PLN * (1.0f/USD2PLN);
+                    etUSD.setText(Float.toString(USD));
+                    etPLN.setText(Float.toString(PLN));
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Enter value", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
         }
     }
