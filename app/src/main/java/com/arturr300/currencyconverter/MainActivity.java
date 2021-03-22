@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //components variables
+    //components variables 
     EditText etUSD;
     EditText etEUR;
     EditText etPLN;
@@ -51,29 +51,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.buttonConvert:
 
-                if(!etUSD.getText().equals(""))
+                if(etUSD.getText().toString().trim().length()>0)
                 {
                     float USD = Float.parseFloat(etUSD.getText().toString());
-                    float PLN = USD * USD2PLN;
-                    float EUR = USD * USD2EUR;
+                    float PLN = USD * (1.0f/USD2PLN);
+                    float EUR = USD * (1.0f/USD2EUR);
                     etPLN.setText(Float.toString(PLN));
                     etEUR.setText(Float.toString(EUR));
                 }
-                else if(!etEUR.getText().equals(""))
+                else if(etEUR.getText().toString().trim().length()>0)
             {
                 float EUR = Float.parseFloat(etEUR.getText().toString());
-                float PLN = EUR * EUR2PLN;
-                float USD = EUR * (1.0f/USD2EUR);
+                float PLN = EUR * (1.0f/EUR2PLN);
+                float USD = EUR * (USD2EUR);
                 etUSD.setText(Float.toString(USD));
                 etPLN.setText(Float.toString(PLN));
             }
-                else if(!etEUR.getText().equals(""))
+                else if(etPLN.getText().toString().trim().length()>0)
                 {
                     float PLN = Float.parseFloat(etPLN.getText().toString());
-                    float EUR = PLN * (1.0f/EUR2PLN);
-                    float USD = PLN * (1.0f/USD2PLN);
+                    float EUR = PLN * (EUR2PLN);
+                    float USD = PLN * (USD2PLN);
                     etUSD.setText(Float.toString(USD));
-                    etPLN.setText(Float.toString(PLN));
+                    etEUR.setText(Float.toString(EUR));
                 }
                 else
                 {
