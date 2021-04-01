@@ -8,6 +8,7 @@ import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,36 +36,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvEUR2PLN;
     Button btnClear;
     Button btnConvert;
-
-
+    //second part
+    Spinner spinnerFirstCurrency;
+    Spinner spinnerSecondCurrency;
+    EditText etFirstCurrencyValue;
+    EditText etSecondCurrencyValue;
+    Button btnClear2;
+    Button btnConvert2;
 
     //other variables
-
-
-
-   // final double USD2PLN = 3.89f;
-    //final double USD2EUR = 0.84f;
-    //final double EUR2PLN = 4.62f;
-
- double USD2PLN;
- double USD2EUR;
- double EUR2PLN;
+    double USD2PLN;
+    double USD2EUR;
+    double EUR2PLN;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-           setContentView(R.layout.activity_main);
-            appContext = getApplicationContext();
-            //components variables assignment
-        etUSD = (EditText)findViewById(R.id.editTextUSD);
-        etEUR = (EditText)findViewById(R.id.editTextEUR);
-        etPLN = (EditText)findViewById(R.id.editTextPLN);
+        setContentView(R.layout.activity_main);
+        appContext = getApplicationContext();
+        //components variables assignment
+        etUSD = (EditText) findViewById(R.id.editTextUSD);
+        etEUR = (EditText) findViewById(R.id.editTextEUR);
+        etPLN = (EditText) findViewById(R.id.editTextPLN);
         btnClear = (Button) findViewById(R.id.buttonClear);
         btnConvert = (Button) findViewById(R.id.buttonConvert);
-        tvUSD2PLN = (TextView)findViewById(R.id.tvUSD2PLN);
-        tvUSD2EUR = (TextView)findViewById(R.id.tvUSD2EUR);
-        tvEUR2PLN = (TextView)findViewById(R.id.tvEUR2PLN);
+        tvUSD2PLN = (TextView) findViewById(R.id.tvUSD2PLN);
+        tvUSD2EUR = (TextView) findViewById(R.id.tvUSD2EUR);
+        tvEUR2PLN = (TextView) findViewById(R.id.tvEUR2PLN);
+        spinnerFirstCurrency = (Spinner)findViewById(R.id.spinnerFirstCurrency);
+         spinnerSecondCurrency= (Spinner)findViewById(R.id.spinnerSecondCurrency);
+         etFirstCurrencyValue= (EditText) findViewById(R.id.editTextFirstCurrencyValue);
+         etSecondCurrencyValue= (EditText)findViewById(R.id.editTextSecondCurrencyValue);
+         btnClear2= (Button) findViewById(R.id.buttonClear2);
+        btnConvert2= (Button) findViewById(R.id.buttonConvert2);
 
         //assignment of listeners
         btnClear.setOnClickListener(this);
@@ -75,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StrictMode.setThreadPolicy(policy);
 
         USD2PLN = getCurrencyRateFromAPI("USD", "PLN");
-        USD2EUR = getCurrencyRateFromAPI("USD", "EUR");;
-        EUR2PLN = getCurrencyRateFromAPI("EUR", "PLN");;
+        USD2EUR = getCurrencyRateFromAPI("USD", "EUR");
+        EUR2PLN = getCurrencyRateFromAPI("EUR", "PLN");
 
         DecimalFormat df = new DecimalFormat("#.###");
         tvUSD2PLN.setText(df.format(USD2PLN));
@@ -86,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch(v.getId())
-        {
+        switch (v.getId()) {
             case R.id.buttonClear:
                 etUSD.setText("");
                 etEUR.setText("");
@@ -96,52 +100,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.buttonConvert:
 
-                if(etUSD.getText().toString().trim().length()>0)
-                {
+                if (etUSD.getText().toString().trim().length() > 0) {
                     double USD = Double.parseDouble(etUSD.getText().toString());
                     double PLN = USD * USD2PLN;
                     double EUR = USD * USD2EUR;
                     etPLN.setText(Double.toString(PLN));
                     etEUR.setText(Double.toString(EUR));
-                }
-                else if(etEUR.getText().toString().trim().length()>0)
-            {
-                double EUR = Double.parseDouble(etEUR.getText().toString());
-                double PLN = EUR * EUR2PLN;
-                double USD = EUR * (1.0f/USD2EUR);
-                etUSD.setText(Double.toString(USD));
-                etPLN.setText(Double.toString(PLN));
-            }
-                else if(etPLN.getText().toString().trim().length()>0)
-                {
+                } else if (etEUR.getText().toString().trim().length() > 0) {
+                    double EUR = Double.parseDouble(etEUR.getText().toString());
+                    double PLN = EUR * EUR2PLN;
+                    double USD = EUR * (1.0f / USD2EUR);
+                    etUSD.setText(Double.toString(USD));
+                    etPLN.setText(Double.toString(PLN));
+                } else if (etPLN.getText().toString().trim().length() > 0) {
                     double PLN = Double.parseDouble(etPLN.getText().toString());
-                    double EUR = PLN * (1.0f/EUR2PLN);
-                    double USD = PLN * (1.0f/USD2PLN);
+                    double EUR = PLN * (1.0f / EUR2PLN);
+                    double USD = PLN * (1.0f / USD2PLN);
                     etUSD.setText(Double.toString(USD));
                     etEUR.setText(Double.toString(EUR));
-                }
-                else
-                {
+                } else {
                     Toast.makeText(appContext, "Enter value", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
         }
     }
 
-    double getCurrencyRateFromAPI(String base, String target)
-    {
+    double getCurrencyRateFromAPI(String base, String target) {
         double jTarget;
         String url1 = "https://api.exchangeratesapi.io/latest?base=" + base;
         String jsonStr = "";
         try {
             URL url2 = new URL(url1);
             BufferedReader br = new BufferedReader(new InputStreamReader(url2.openStream()));
-            String output="";
-            String line="";
-            while((line=br.readLine())!=null)
-            {
-                output+=line;
+            String output = "";
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                output += line;
             }
             //Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
             JSONObject jMain = new JSONObject(output);
@@ -149,11 +143,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String jDate = jMain.getString("date");
             JSONObject jRates = jMain.getJSONObject("rates");
             jTarget = jRates.getDouble(target);
-            String strr = "base="+jBase+", target{"+target+"}="+jTarget;
+            String strr = "base=" + jBase + ", target{" + target + "}=" + jTarget;
             //Toast.makeText(appContext, strr, Toast.LENGTH_LONG).show();
             return jTarget;
-        }
-        catch(IOException | JSONException e) {
+        } catch (IOException | JSONException e) {
             Toast.makeText(appContext, e.toString(), Toast.LENGTH_LONG).show();
             return -1.0f;
         }
