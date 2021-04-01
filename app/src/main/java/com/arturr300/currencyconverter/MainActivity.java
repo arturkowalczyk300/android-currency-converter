@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +19,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -60,24 +58,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         appContext = getApplicationContext();
         //components variables assignment
-        etUSD = (EditText) findViewById(R.id.editTextUSD);
-        etEUR = (EditText) findViewById(R.id.editTextEUR);
-        etPLN = (EditText) findViewById(R.id.editTextPLN);
-        btnClear = (Button) findViewById(R.id.buttonClear);
-        btnConvert = (Button) findViewById(R.id.buttonConvert);
-        tvUSD2PLN = (TextView) findViewById(R.id.tvUSD2PLN);
-        tvUSD2EUR = (TextView) findViewById(R.id.tvUSD2EUR);
-        tvEUR2PLN = (TextView) findViewById(R.id.tvEUR2PLN);
-        spinnerFirstCurrency = (Spinner)findViewById(R.id.spinnerFirstCurrency);
-         spinnerSecondCurrency= (Spinner)findViewById(R.id.spinnerSecondCurrency);
-         etFirstCurrencyValue= (EditText) findViewById(R.id.editTextFirstCurrencyValue);
-         etSecondCurrencyValue= (EditText)findViewById(R.id.editTextSecondCurrencyValue);
-         btnClear2= (Button) findViewById(R.id.buttonClear2);
-        btnConvert2= (Button) findViewById(R.id.buttonConvert2);
+        etUSD = findViewById(R.id.editTextUSD);
+        etEUR = findViewById(R.id.editTextEUR);
+        etPLN = findViewById(R.id.editTextPLN);
+        btnClear = findViewById(R.id.buttonClear);
+        btnConvert = findViewById(R.id.buttonConvert);
+        tvUSD2PLN = findViewById(R.id.tvUSD2PLN);
+        tvUSD2EUR = findViewById(R.id.tvUSD2EUR);
+        tvEUR2PLN = findViewById(R.id.tvEUR2PLN);
+        spinnerFirstCurrency = findViewById(R.id.spinnerFirstCurrency);
+        spinnerSecondCurrency = findViewById(R.id.spinnerSecondCurrency);
+        etFirstCurrencyValue = findViewById(R.id.editTextFirstCurrencyValue);
+        etSecondCurrencyValue = findViewById(R.id.editTextSecondCurrencyValue);
+        btnClear2 = findViewById(R.id.buttonClear2);
+        btnConvert2 = findViewById(R.id.buttonConvert2);
 
         //assignment of listeners
         btnClear.setOnClickListener(this);
         btnConvert.setOnClickListener(this);
+        btnClear2.setOnClickListener(this);
+        btnConvert2.setOnClickListener(this);
 
         //thread responsibility fuses override
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvUSD2PLN.setText(df.format(USD2PLN));
         tvUSD2EUR.setText(df.format(USD2EUR));
         tvEUR2PLN.setText(df.format(EUR2PLN));
+
+        fillSpinners();
     }
 
     @Override
@@ -130,8 +132,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 etSecondCurrencyValue.setText("");
                 break;
             case R.id.buttonConvert2:
-                Toast.makeText(appContext, "Not available", Toast.LENGTH_LONG).show();
+                String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
+                String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
+                Toast.makeText(appContext, "first:"+currencyFirst+" second:"+currencySecond, Toast.LENGTH_SHORT).show();
+                if (etFirstCurrencyValue.getText().toString().trim().length() > 0) {
+                    double first = Double.parseDouble(etFirstCurrencyValue.getText().toString());
+                    double second = first * getCurrencyRateFromAPI(currencyFirst, currencySecond);
+                    Toast.makeText(appContext, "val,first:"+Double.toString(first)+" second:"+Double.toString(second), Toast.LENGTH_SHORT).show();
+                    etSecondCurrencyValue.setText(Double.toString(second));
+                } else if (etSecondCurrencyValue.getText().toString().trim().length() > 0) {
+                    double second = Double.parseDouble(etSecondCurrencyValue.getText().toString());
+                    double first = second* getCurrencyRateFromAPI(currencySecond, currencyFirst);
+                    etFirstCurrencyValue.setText(Double.toString(first));
+                }
+
                 break;
+        }
+    }
+
+    void fillSpinners()
+    {
+        double jTarget;
+        //String url1 = "https://api.exchangeratesapi.io/latest?base=" + base;
+        String url3 = "https://api.frankfurter.app/latest";
+        try {
+            URL url2 = new URL(url3);
+            BufferedReader br = new BufferedReader(new InputStreamReader(url2.openStream()));
+            String output = "";
+            String line;
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            output += sb.toString();
+            //Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
+            JSONObject jMain = new JSONObject(output);
+            //String jBase = jMain.getString("base");
+            //String jDate = jMain.getString("date");
+            JSONObject jRates = jMain.getJSONObject("rates");
+            //todo: create here list with rates
+            List<String> listRates = new ArrayList<>();
+            for (Iterator<String> iterator = jRates.keys(); iterator.hasNext(); ) {
+                String key = iterator.next();
+                listRates.add(key);
+            }
+            //fill spinners
+            ArrayAdapter<String> aa = new ArrayAdapter<>(appContext, android.R.layout.simple_spinner_dropdown_item, listRates);
+            spinnerFirstCurrency.setAdapter(aa);
+            spinnerSecondCurrency.setAdapter(aa);
+        }
+        catch (IOException | JSONException e) {
+            Toast.makeText(appContext, e.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -139,34 +190,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         double jTarget;
         //String url1 = "https://api.exchangeratesapi.io/latest?base=" + base;
         String url1 = "https://api.frankfurter.app/latest?from=" + base;
-        String jsonStr = "";
         try {
             URL url2 = new URL(url1);
             BufferedReader br = new BufferedReader(new InputStreamReader(url2.openStream()));
             String output = "";
-            String line = "";
+            String line;
+            StringBuilder sb = new StringBuilder();
             while ((line = br.readLine()) != null) {
-                output += line;
+                sb.append(line);
             }
+            output += sb.toString();
             //Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
             JSONObject jMain = new JSONObject(output);
-            String jBase = jMain.getString("base");
-            String jDate = jMain.getString("date");
+            //String jBase = jMain.getString("base");
+            //String jDate = jMain.getString("date");
             JSONObject jRates = jMain.getJSONObject("rates");
             //todo: create here list with rates
-            List listRates = new ArrayList<String>();
-            for(Iterator<String> iter = jRates.keys();iter.hasNext();) {
-                String key = iter.next();
+            List<String> listRates = new ArrayList<>();
+            for (Iterator<String> iterator = jRates.keys(); iterator.hasNext(); ) {
+                String key = iterator.next();
                 listRates.add(key);
             }
             //fill spinners
             ArrayAdapter<String> aa = new ArrayAdapter<>(appContext, android.R.layout.simple_spinner_dropdown_item, listRates);
-            spinnerFirstCurrency.setAdapter(aa);
-            spinnerSecondCurrency.setAdapter(aa);
-            Toast.makeText(appContext, listRates.toString(), Toast.LENGTH_SHORT).show();
+            //spinnerFirstCurrency.setAdapter(aa);
+            //spinnerSecondCurrency.setAdapter(aa);
+            //Toast.makeText(appContext, listRates.toString(), Toast.LENGTH_SHORT).show();
             jTarget = jRates.getDouble(target);
-            String strr = "base=" + jBase + ", target{" + target + "}=" + jTarget;
-            //Toast.makeText(appContext, strr, Toast.LENGTH_LONG).show();
+            //String toastStr = "base=" + jBase + ", target{" + target + "}=" + jTarget;
+            //Toast.makeText(appContext, toastStr, Toast.LENGTH_LONG).show();
             return jTarget;
         } catch (IOException | JSONException e) {
             Toast.makeText(appContext, e.toString(), Toast.LENGTH_LONG).show();
