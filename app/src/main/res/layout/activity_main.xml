@@ -143,7 +143,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="50dp"
@@ -156,7 +156,7 @@
                 android:layout_margin="0dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="238dp"
-                android:text="USD to PLN"
+                android:text="USD to PLN "
                 android:textColor="#061235"
                 app:layout_constraintStart_toStartOf="@+id/textViewPLN"
                 app:layout_constraintTop_toTopOf="@+id/textViewPLN" />
@@ -166,7 +166,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
-                android:layout_marginStart="20dp"
                 android:text="TextView"
                 android:textColor="#000000"
                 app:layout_constraintStart_toEndOf="@+id/textView"
@@ -175,7 +174,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:orientation="horizontal">
@@ -187,7 +186,7 @@
                 android:layout_margin="0dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="31dp"
-                android:text="USD to EUR"
+                android:text="USD to EUR "
                 android:textColor="#061235"
                 app:layout_constraintStart_toStartOf="@+id/textViewPLN"
                 app:layout_constraintTop_toTopOf="@+id/textView" />
@@ -207,7 +206,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:orientation="horizontal">
@@ -218,7 +217,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:layout_marginTop="36dp"
-                android:text="EUR to PLN"
+                android:text="EUR to PLN "
                 android:textColor="#061235"
                 app:layout_constraintStart_toStartOf="@+id/textView2"
                 app:layout_constraintTop_toTopOf="@+id/textView2" />

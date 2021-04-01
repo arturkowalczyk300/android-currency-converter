@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -77,9 +78,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         USD2EUR = getCurrencyRateFromAPI("USD", "EUR");;
         EUR2PLN = getCurrencyRateFromAPI("EUR", "PLN");;
 
-        tvUSD2PLN.setText(Double.toString(USD2PLN));
-        tvUSD2EUR.setText(Double.toString(USD2EUR));
-        tvEUR2PLN.setText(Double.toString(EUR2PLN));
+        DecimalFormat df = new DecimalFormat("#.###");
+        tvUSD2PLN.setText(df.format(USD2PLN));
+        tvUSD2EUR.setText(df.format(USD2EUR));
+        tvEUR2PLN.setText(df.format(EUR2PLN));
     }
 
     @Override
