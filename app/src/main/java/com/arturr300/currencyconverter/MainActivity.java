@@ -22,6 +22,9 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -127,7 +130,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     double getCurrencyRateFromAPI(String base, String target) {
         double jTarget;
-        String url1 = "https://api.exchangeratesapi.io/latest?base=" + base;
+        //String url1 = "https://api.exchangeratesapi.io/latest?base=" + base;
+        String url1 = "https://api.frankfurter.app/latest?from=" + base;
         String jsonStr = "";
         try {
             URL url2 = new URL(url1);
@@ -142,6 +146,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String jBase = jMain.getString("base");
             String jDate = jMain.getString("date");
             JSONObject jRates = jMain.getJSONObject("rates");
+            //todo: create here list with rates
+            List listRates = new ArrayList<String>();
+            for(Iterator<String> iter = jRates.keys();iter.hasNext();) {
+                String key = iter.next();
+
+                listRates.add(key);
+            }
+            Toast.makeText(appContext, listRates.toString(), Toast.LENGTH_SHORT).show();
             jTarget = jRates.getDouble(target);
             String strr = "base=" + jBase + ", target{" + target + "}=" + jTarget;
             //Toast.makeText(appContext, strr, Toast.LENGTH_LONG).show();

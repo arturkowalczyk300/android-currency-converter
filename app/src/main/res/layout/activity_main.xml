@@ -251,13 +251,6 @@
                     android:layout_height="wrap_content"
                     android:text="Waluta 1"/>
 
-                <EditText
-                    android:id="@+id/editTextFirstCurrencyValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:digits="0123456789."
-                    android:ems="5"
-                    android:inputType="number" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -301,5 +294,13 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/editTextFirstCurrencyValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:digits="0123456789."
+            android:ems="5"
+            android:inputType="number" />
     </LinearLayout>
 </LinearLayout>
