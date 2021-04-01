@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -102,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getCurrencyRateFromAPI("USD", "PLN");
                 break;
             case R.id.buttonConvert:
-
                 if (etUSD.getText().toString().trim().length() > 0) {
                     double USD = Double.parseDouble(etUSD.getText().toString());
                     double PLN = USD * USD2PLN;
@@ -124,6 +124,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     Toast.makeText(appContext, "Enter value", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.buttonClear2:
+                etFirstCurrencyValue.setText("");
+                etSecondCurrencyValue.setText("");
+                break;
+            case R.id.buttonConvert2:
+                Toast.makeText(appContext, "Not available", Toast.LENGTH_LONG).show();
                 break;
         }
     }
@@ -150,9 +157,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             List listRates = new ArrayList<String>();
             for(Iterator<String> iter = jRates.keys();iter.hasNext();) {
                 String key = iter.next();
-
                 listRates.add(key);
             }
+            //fill spinners
+            ArrayAdapter<String> aa = new ArrayAdapter<>(appContext, android.R.layout.simple_spinner_dropdown_item, listRates);
+            spinnerFirstCurrency.setAdapter(aa);
+            spinnerSecondCurrency.setAdapter(aa);
             Toast.makeText(appContext, listRates.toString(), Toast.LENGTH_SHORT).show();
             jTarget = jRates.getDouble(target);
             String strr = "base=" + jBase + ", target{" + target + "}=" + jTarget;
