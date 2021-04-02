@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.arturr300.currencyconverter.CurrencyUtils;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Context appContext;
@@ -50,7 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     double USD2PLN;
     double USD2EUR;
     double EUR2PLN;
-
+    DecimalFormat df;
+    CurrencyUtils mCurrencyUtils = new CurrencyUtils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +86,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        USD2PLN = getCurrencyRateFromAPI("USD", "PLN");
-        USD2EUR = getCurrencyRateFromAPI("USD", "EUR");
-        EUR2PLN = getCurrencyRateFromAPI("EUR", "PLN");
+        USD2PLN = mCurrencyUtils.getCurrencyRate("USD", "PLN");
+        USD2EUR = mCurrencyUtils.getCurrencyRate("USD", "EUR");
+        EUR2PLN = mCurrencyUtils.getCurrencyRate("EUR", "PLN");
 
-        DecimalFormat df = new DecimalFormat("#.###");
+        df = new DecimalFormat("#.###");
         tvUSD2PLN.setText(df.format(USD2PLN));
         tvUSD2EUR.setText(df.format(USD2EUR));
         tvEUR2PLN.setText(df.format(EUR2PLN));
@@ -102,25 +105,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 etUSD.setText("");
                 etEUR.setText("");
                 etPLN.setText("");
-                getCurrencyRateFromAPI("USD", "PLN");
+                mCurrencyUtils.getCurrencyRate("USD", "PLN");
                 break;
             case R.id.buttonConvert:
                 if (etUSD.getText().toString().trim().length() > 0) {
                     double USD = Double.parseDouble(etUSD.getText().toString());
-                    double PLN = USD * USD2PLN;
-                    double EUR = USD * USD2EUR;
+                    double PLN = mCurrencyUtils.getConvertedCurrency("USD", USD, "PLN");
+                    double EUR = mCurrencyUtils.getConvertedCurrency("USD", USD, "EUR");
                     etPLN.setText(Double.toString(PLN));
                     etEUR.setText(Double.toString(EUR));
                 } else if (etEUR.getText().toString().trim().length() > 0) {
                     double EUR = Double.parseDouble(etEUR.getText().toString());
-                    double PLN = EUR * EUR2PLN;
-                    double USD = EUR * (1.0f / USD2EUR);
+                    double PLN = mCurrencyUtils.getConvertedCurrency("EUR", EUR, "PLN");
+                    double USD = mCurrencyUtils.getConvertedCurrency("EUR", EUR, "USD");
                     etUSD.setText(Double.toString(USD));
                     etPLN.setText(Double.toString(PLN));
                 } else if (etPLN.getText().toString().trim().length() > 0) {
                     double PLN = Double.parseDouble(etPLN.getText().toString());
-                    double EUR = PLN * (1.0f / EUR2PLN);
-                    double USD = PLN * (1.0f / USD2PLN);
+                    double EUR = mCurrencyUtils.getConvertedCurrency("PLN", PLN, "EUR");
+                    double USD =  mCurrencyUtils.getConvertedCurrency("PLN", PLN, "USD");
                     etUSD.setText(Double.toString(USD));
                     etEUR.setText(Double.toString(EUR));
                 } else {
@@ -134,95 +137,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.buttonConvert2:
                 String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
                 String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
-                Toast.makeText(appContext, "first:"+currencyFirst+" second:"+currencySecond, Toast.LENGTH_SHORT).show();
                 if (etFirstCurrencyValue.getText().toString().trim().length() > 0) {
                     double first = Double.parseDouble(etFirstCurrencyValue.getText().toString());
-                    double second = first * getCurrencyRateFromAPI(currencyFirst, currencySecond);
-                    Toast.makeText(appContext, "val,first:"+Double.toString(first)+" second:"+Double.toString(second), Toast.LENGTH_SHORT).show();
-                    etSecondCurrencyValue.setText(Double.toString(second));
+                    double second = mCurrencyUtils.getConvertedCurrency(currencyFirst, first, currencySecond);
+                    etSecondCurrencyValue.setText(df.format(second));
                 } else if (etSecondCurrencyValue.getText().toString().trim().length() > 0) {
                     double second = Double.parseDouble(etSecondCurrencyValue.getText().toString());
-                    double first = second* getCurrencyRateFromAPI(currencySecond, currencyFirst);
-                    etFirstCurrencyValue.setText(Double.toString(first));
+                    double first = mCurrencyUtils.getConvertedCurrency(currencySecond, second, currencyFirst);
+                    etFirstCurrencyValue.setText(df.format(first));
                 }
 
                 break;
         }
     }
 
-    void fillSpinners()
-    {
-        double jTarget;
-        //String url1 = "https://api.exchangeratesapi.io/latest?base=" + base;
-        String url3 = "https://api.frankfurter.app/latest";
-        try {
-            URL url2 = new URL(url3);
-            BufferedReader br = new BufferedReader(new InputStreamReader(url2.openStream()));
-            String output = "";
-            String line;
-            StringBuilder sb = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            output += sb.toString();
-            //Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
-            JSONObject jMain = new JSONObject(output);
-            //String jBase = jMain.getString("base");
-            //String jDate = jMain.getString("date");
-            JSONObject jRates = jMain.getJSONObject("rates");
-            //todo: create here list with rates
-            List<String> listRates = new ArrayList<>();
-            for (Iterator<String> iterator = jRates.keys(); iterator.hasNext(); ) {
-                String key = iterator.next();
-                listRates.add(key);
-            }
-            //fill spinners
-            ArrayAdapter<String> aa = new ArrayAdapter<>(appContext, android.R.layout.simple_spinner_dropdown_item, listRates);
-            spinnerFirstCurrency.setAdapter(aa);
-            spinnerSecondCurrency.setAdapter(aa);
-        }
-        catch (IOException | JSONException e) {
-            Toast.makeText(appContext, e.toString(), Toast.LENGTH_LONG).show();
-        }
+    void fillSpinners() {
+        List<String> listRates = mCurrencyUtils.getAvailableCurrencies();
+        ArrayAdapter<String> aa = new ArrayAdapter<>(appContext, android.R.layout.simple_spinner_dropdown_item, listRates);
+        spinnerFirstCurrency.setAdapter(aa);
+        spinnerSecondCurrency.setAdapter(aa);
     }
 
-    double getCurrencyRateFromAPI(String base, String target) {
-        double jTarget;
-        //String url1 = "https://api.exchangeratesapi.io/latest?base=" + base;
-        String url1 = "https://api.frankfurter.app/latest?from=" + base;
-        try {
-            URL url2 = new URL(url1);
-            BufferedReader br = new BufferedReader(new InputStreamReader(url2.openStream()));
-            String output = "";
-            String line;
-            StringBuilder sb = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            output += sb.toString();
-            //Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
-            JSONObject jMain = new JSONObject(output);
-            //String jBase = jMain.getString("base");
-            //String jDate = jMain.getString("date");
-            JSONObject jRates = jMain.getJSONObject("rates");
-            //todo: create here list with rates
-            List<String> listRates = new ArrayList<>();
-            for (Iterator<String> iterator = jRates.keys(); iterator.hasNext(); ) {
-                String key = iterator.next();
-                listRates.add(key);
-            }
-            //fill spinners
-            ArrayAdapter<String> aa = new ArrayAdapter<>(appContext, android.R.layout.simple_spinner_dropdown_item, listRates);
-            //spinnerFirstCurrency.setAdapter(aa);
-            //spinnerSecondCurrency.setAdapter(aa);
-            //Toast.makeText(appContext, listRates.toString(), Toast.LENGTH_SHORT).show();
-            jTarget = jRates.getDouble(target);
-            //String toastStr = "base=" + jBase + ", target{" + target + "}=" + jTarget;
-            //Toast.makeText(appContext, toastStr, Toast.LENGTH_LONG).show();
-            return jTarget;
-        } catch (IOException | JSONException e) {
-            Toast.makeText(appContext, e.toString(), Toast.LENGTH_LONG).show();
-            return -1.0f;
-        }
-    }
 }
