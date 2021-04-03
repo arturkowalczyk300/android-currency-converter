@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">CurrencyConverter</string>
+    <string name="app_name">PrzelicznikWalut</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="most_used">Często używane</string>
-    <string name="list_select">Wybr walut</string>
+    <string name="list_select">Wybór walut</string>
     <string name="text_currency1">Waluta 1</string>
     <string name="text_currency2">Waluta 2</string>
     <string name="btn_clear">Wyczyść</string>
     <string name="btn_convert">Konwertuj</string>
+    <string name="menu_settings">Ustawienia</string>
+    <string name="menu_about">O aplikacji</string>
 </resources>

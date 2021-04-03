@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.List;
 
 public class ListSelect extends Fragment {
@@ -75,6 +76,8 @@ public class ListSelect extends Fragment {
     }
     void fillSpinners() {
         List<String> listRates = mCurrencyUtils.getAvailableCurrencies();
+        listRates.add("EUR"); //it is base currency, so rates JSONObject not contains it ; it must be added manually
+        Collections.sort(listRates);
         ArrayAdapter<String> aa = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, listRates);
         spinnerFirstCurrency.setAdapter(aa);
         spinnerSecondCurrency.setAdapter(aa);

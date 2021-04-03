@@ -43,7 +43,7 @@ public class CurrencyUtils {
 
     List<String> getAvailableCurrencies() {
         try {
-            JSONObject jMain = getJSONObjectFromAPI(false, "");
+            JSONObject jMain = getJSONObjectFromAPI(true, "EUR");
             JSONObject jRates = jMain.getJSONObject("rates");
             List<String> listRates = new ArrayList<>();
             for (Iterator<String> iterator = jRates.keys(); iterator.hasNext(); ) {
