@@ -3,6 +3,7 @@ package com.arturr300.currencyconverter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -11,6 +12,8 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,11 +37,20 @@ import java.util.List;
 import com.arturr300.currencyconverter.CurrencyUtils;
 import com.google.android.material.tabs.TabLayout;
 
+//todo(1): materialdesign toolbar with options list
+//todo(2): show ratings after select currencies
+//todo(3): remember last selected currencies
+//todo(4): repair lack of EUR currency on list
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Context appContext;
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
 
     //tablayout part
     TabLayout tabLayout;
@@ -54,10 +66,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     CurrencyUtils mCurrencyUtils = new CurrencyUtils();
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //HandleItem selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Toast.makeText(appContext, "Action_settings clicked!", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_about:
+                Toast.makeText(appContext, "Action_about clicked!", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         appContext = getApplicationContext();
+        //add toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //tab layout part
         tabLayout = findViewById(R.id.tabLayout);
@@ -71,12 +101,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         viewPagerAdapter.addFragment(fragmentListSelect, "Wybór walut");
         viewPager.setAdapter(viewPagerAdapter);
 
-
-
-
-
-
-
         //thread responsibility fuses override
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -86,10 +110,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EUR2PLN = mCurrencyUtils.getCurrencyRate("EUR", "PLN");
 
         df = new DecimalFormat("#.###");
-        //tvUSD2PLN.setText(df.format(USD2PLN));
-        //tvUSD2EUR.setText(df.format(USD2EUR));
-        //tvEUR2PLN.setText(df.format(EUR2PLN));
-
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -102,10 +122,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super(fm, behavior);
         }
 
-        public void addFragment(Fragment fragment, String title)
-        {
-        fragments.add(fragment);
-        fragmentTitle.add(title);
+        public void addFragment(Fragment fragment, String title) {
+            fragments.add(fragment);
+            fragmentTitle.add(title);
         }
 
         @NonNull
@@ -130,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 
     }
-
-
 
 
 }
