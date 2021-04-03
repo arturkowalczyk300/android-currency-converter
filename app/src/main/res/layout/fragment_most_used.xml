@@ -106,7 +106,7 @@
             android:layout_marginStart="72dp"
             android:layout_marginTop="42dp"
             android:layout_weight="1"
-            android:text="Clear" />
+            android:text="@string/btn_clear" />
 
         <Button
             android:id="@+id/buttonConvert"
@@ -116,7 +116,7 @@
             android:layout_marginStart="56dp"
             android:layout_marginTop="42dp"
             android:layout_weight="1"
-            android:text="Convert" />
+            android:text="@string/btn_convert" />
     </LinearLayout>
 
 </LinearLayout>

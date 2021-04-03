@@ -37,7 +37,6 @@ import java.util.List;
 import com.arturr300.currencyconverter.CurrencyUtils;
 import com.google.android.material.tabs.TabLayout;
 
-//todo(1): materialdesign toolbar with options list
 //todo(2): show ratings after select currencies
 //todo(3): remember last selected currencies
 //todo(4): repair lack of EUR currency on list
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    //tablayout part
+    //tab layout part
     TabLayout tabLayout;
     ViewPager viewPager;
     ListSelect fragmentListSelect;
@@ -97,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabLayout.setupWithViewPager(viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        viewPagerAdapter.addFragment(fragmentMostUsed, "Najczęściej używane");
-        viewPagerAdapter.addFragment(fragmentListSelect, "Wybór walut");
+        viewPagerAdapter.addFragment(fragmentMostUsed, getString(R.string.most_used));
+        viewPagerAdapter.addFragment(fragmentListSelect, getString(R.string.list_select));
         viewPager.setAdapter(viewPagerAdapter);
 
         //thread responsibility fuses override
