@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -30,6 +31,10 @@ public class ListSelect extends Fragment {
     EditText etSecondCurrencyValue;
     Button btnClear2;
     Button btnConvert2;
+
+    TextView textViewRate1To2;
+    TextView textViewRate2To1;
+
     DecimalFormat df;
     CurrencyUtils mCurrencyUtils = new CurrencyUtils();
 
@@ -62,6 +67,9 @@ public class ListSelect extends Fragment {
         btnClear2 = view.findViewById(R.id.buttonClear2);
         btnConvert2 = view.findViewById(R.id.buttonConvert2);
 
+        textViewRate1To2 = view.findViewById(R.id.textViewRate1To2);
+        textViewRate2To1 = view.findViewById(R.id.textViewRate2To1);
+
         btnClear2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +101,7 @@ public class ListSelect extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 saveSpinnerValue();
+                fillRateValue();
             }
 
             @Override
@@ -114,6 +123,12 @@ public class ListSelect extends Fragment {
         });
 
         return view;
+    }
+    void fillRateValue()
+    {
+        assert(spinnerFirstCurrency.getSelectedItem().toString().length()>0 && spinnerSecondCurrency.getSelectedItem().toString().length()>0);
+       textViewRate1To2.setText(Double.toString(mCurrencyUtils.getCurrencyRate(spinnerFirstCurrency.getSelectedItem().toString(), spinnerSecondCurrency.getSelectedItem().toString()) ));
+        textViewRate2To1.setText(Double.toString(mCurrencyUtils.getCurrencyRate(spinnerSecondCurrency.getSelectedItem().toString(), spinnerFirstCurrency.getSelectedItem().toString()) ));
     }
     void fillSpinners() {
         List<String> listRates = mCurrencyUtils.getAvailableCurrencies();

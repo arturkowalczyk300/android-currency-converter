@@ -10,4 +10,7 @@
     <string name="btn_convert">Konwertuj</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_about">O aplikacji</string>
+    <string name="text_rate1_to2">Kurs -----&gt;:</string>
+    <string name="text_rate2_to1">Kurs &lt;-----:</string>
+
 </resources>

@@ -38,7 +38,6 @@ import com.arturr300.currencyconverter.CurrencyUtils;
 import com.google.android.material.tabs.TabLayout;
 
 //todo(2): show ratings after select currencies
-//todo(3): remember last selected currencies
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
