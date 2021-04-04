@@ -39,7 +39,6 @@ import com.google.android.material.tabs.TabLayout;
 
 //todo(2): show ratings after select currencies
 //todo(3): remember last selected currencies
-//todo(4): repair lack of EUR currency on list
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

@@ -1,5 +1,7 @@
 package com.arturr300.currencyconverter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,16 +9,20 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
 public class ListSelect extends Fragment {
+    final String settingsFileName = "mySettings";
     //second part
     Spinner spinnerFirstCurrency;
     Spinner spinnerSecondCurrency;
@@ -31,6 +37,16 @@ public class ListSelect extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         df = new DecimalFormat("#.###");
+    }
+
+    void saveSpinnerValue()
+    {
+        String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
+        String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
+        SharedPreferences.Editor editor = getActivity().getApplicationContext().getSharedPreferences(settingsFileName, Context.MODE_PRIVATE).edit();
+        editor.putString("currencyFirst", currencyFirst);
+        editor.putString("currencySecond", currencySecond);
+        editor.apply();
     }
 
     @Override
@@ -72,6 +88,31 @@ public class ListSelect extends Fragment {
         });
 
         fillSpinners();
+
+        spinnerFirstCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                saveSpinnerValue();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spinnerSecondCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                saveSpinnerValue();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         return view;
     }
     void fillSpinners() {
@@ -81,5 +122,26 @@ public class ListSelect extends Fragment {
         ArrayAdapter<String> aa = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, listRates);
         spinnerFirstCurrency.setAdapter(aa);
         spinnerSecondCurrency.setAdapter(aa);
+
+        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences(settingsFileName, Context.MODE_PRIVATE);
+        String currencyFirst = settings.getString("currencyFirst", "AUD");
+        String currencySecond = settings.getString("currencySecond", "AUD");
+        selectSpinnerItemByValue(spinnerFirstCurrency, currencyFirst);
+        selectSpinnerItemByValue(spinnerSecondCurrency, currencySecond);
+
+    }
+
+    void selectSpinnerItemByValue(Spinner spin, String value)
+    {
+        SpinnerAdapter adapter = spin.getAdapter();
+        for(int pos=0; pos<adapter.getCount(); pos++)
+        {
+            String item = (String)adapter.getItem(pos);
+            if(item.equals(value))
+            {
+                spin.setSelection(pos);
+                return;
+            }
+        }
     }
 }
