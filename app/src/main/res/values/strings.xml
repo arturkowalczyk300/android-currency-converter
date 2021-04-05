@@ -8,6 +8,7 @@
     <string name="text_currency2">Waluta 2</string>
     <string name="btn_clear">Wyczyść</string>
     <string name="btn_convert">Konwertuj</string>
+    <string name="menu_darkmode">Tryb ciemny</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_about">O aplikacji</string>
     <string name="text_rate1_to2">Kurs -----&gt;:</string>

@@ -3,13 +3,16 @@ package com.arturr300.currencyconverter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
@@ -37,7 +40,17 @@ import java.util.List;
 import com.arturr300.currencyconverter.CurrencyUtils;
 import com.google.android.material.tabs.TabLayout;
 
-//todo(2): show ratings after select currencies
+//todo(1): dark mode
+//todo(2): settings activity
+//todo(3): about activity
+//todo(4): show API state
+//todo(5): add icons
+//todo(6): add history (graph, trend)
+//todo(7): landscape orientation
+//todo(8): refactor
+//         -merge duplicate listeners
+//         -
+//todo(9): implement MVVM/MVC
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -46,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        menuItemDarkMode = menu.findItem(R.id.action_darkmode);
+        menuItemDarkMode.setChecked((AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES));
         return true;
     }
 
@@ -54,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ViewPager viewPager;
     ListSelect fragmentListSelect;
     MostUsed fragmentMostUsed;
-
+    MenuItem menuItemDarkMode;
     //other variables
     double USD2PLN;
     double USD2EUR;
@@ -62,10 +77,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     DecimalFormat df;
     CurrencyUtils mCurrencyUtils = new CurrencyUtils();
 
+
+    boolean darkMode = false;
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         //HandleItem selection
         switch (item.getItemId()) {
+            case R.id.action_darkmode:
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    item.setChecked(false);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    item.setChecked(true);
+                }
+                finish(); //destroy activity
+                startActivity(new Intent(MainActivity.this, MainActivity.this.getClass()));
+                return true;
             case R.id.action_settings:
                 Toast.makeText(appContext, "Action_settings clicked!", Toast.LENGTH_SHORT).show();
                 return true;
@@ -80,6 +109,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+        {
+            setTheme(R.style.DarkTheme);
+        }
+        else
+        {
+            setTheme(R.style.LightTheme);
+        }
+
         setContentView(R.layout.activity_main);
         appContext = getApplicationContext();
         //add toolbar
@@ -92,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentListSelect = new ListSelect();
         fragmentMostUsed = new MostUsed();
         tabLayout.setupWithViewPager(viewPager);
+
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
         viewPagerAdapter.addFragment(fragmentMostUsed, getString(R.string.most_used));
@@ -107,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EUR2PLN = mCurrencyUtils.getCurrencyRate("EUR", "PLN");
 
         df = new DecimalFormat("#.###");
+
+
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
