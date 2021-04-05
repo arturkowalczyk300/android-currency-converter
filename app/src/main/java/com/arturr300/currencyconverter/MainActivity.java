@@ -39,12 +39,11 @@ import java.util.List;
 
 import com.arturr300.currencyconverter.CurrencyUtils;
 import com.google.android.material.tabs.TabLayout;
-
-//todo(1): dark mode
+//todo(5): add icons
 //todo(2): settings activity
 //todo(3): about activity
 //todo(4): show API state
-//todo(5): add icons
+
 //todo(6): add history (graph, trend)
 //todo(7): landscape orientation
 //todo(8): refactor
@@ -132,11 +131,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentMostUsed = new MostUsed();
         tabLayout.setupWithViewPager(viewPager);
 
-
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
         viewPagerAdapter.addFragment(fragmentMostUsed, getString(R.string.most_used));
         viewPagerAdapter.addFragment(fragmentListSelect, getString(R.string.list_select));
         viewPager.setAdapter(viewPagerAdapter);
+
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_most_used);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_list_select);
 
         //thread responsibility fuses override
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
