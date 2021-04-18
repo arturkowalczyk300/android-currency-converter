@@ -17,6 +17,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -132,6 +133,11 @@ public class ListSelect extends Fragment {
     }
     void fillSpinners() {
         List<String> listRates = mCurrencyUtils.getAvailableCurrencies();
+        if(listRates == null)
+        {
+            Toast.makeText(getActivity().getApplicationContext(), "Getting available currencies failed!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         listRates.add("EUR"); //it is base currency, so rates JSONObject not contains it ; it must be added manually
         Collections.sort(listRates);
         ArrayAdapter<String> aa = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, listRates);

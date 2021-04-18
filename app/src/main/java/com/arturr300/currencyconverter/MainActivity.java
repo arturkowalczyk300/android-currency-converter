@@ -2,6 +2,7 @@ package com.arturr300.currencyconverter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -39,11 +40,9 @@ import java.util.List;
 
 import com.arturr300.currencyconverter.CurrencyUtils;
 import com.google.android.material.tabs.TabLayout;
-//todo(5): add icons
+//todo(4): show API state, or at least prepare it to exception occur
 //todo(2): settings activity
 //todo(3): about activity
-//todo(4): show API state
-
 //todo(6): add history (graph, trend)
 //todo(7): landscape orientation
 //todo(8): refactor
@@ -98,6 +97,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(appContext, "Action_settings clicked!", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_about:
+                AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.menu_about))
+                        .setMessage(getString(R.string.content_about))
+                        .setNeutralButton("OK", null);
+                alert.show();
                 Toast.makeText(appContext, "Action_about clicked!", Toast.LENGTH_SHORT).show();
                 return true;
             default:
@@ -143,13 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        USD2PLN = mCurrencyUtils.getCurrencyRate("USD", "PLN");
-        USD2EUR = mCurrencyUtils.getCurrencyRate("USD", "EUR");
-        EUR2PLN = mCurrencyUtils.getCurrencyRate("EUR", "PLN");
-
         df = new DecimalFormat("#.###");
-
-
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {

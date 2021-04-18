@@ -44,6 +44,9 @@ public class CurrencyUtils {
     List<String> getAvailableCurrencies() {
         try {
             JSONObject jMain = getJSONObjectFromAPI(true, "EUR");
+            if (jMain == null) {
+                throw new JSONException("Connection to API failed!");
+            }
             JSONObject jRates = jMain.getJSONObject("rates");
             List<String> listRates = new ArrayList<>();
             for (Iterator<String> iterator = jRates.keys(); iterator.hasNext(); ) {
@@ -61,12 +64,14 @@ public class CurrencyUtils {
         double jTarget;
         try {
             JSONObject jMain = getJSONObjectFromAPI(true, base);
+            if (jMain == null) {
+                throw new JSONException("Connection to API failed!");
+            }
             JSONObject jRates = jMain.getJSONObject("rates");
             jTarget = jRates.getDouble(target);
             return jTarget;
         } catch (JSONException e) {
-            //Toast.makeText(appContext, e.toString(), Toast.LENGTH_LONG).show();
-            return -1.0f;
+            return -100.0f;
         }
     }
 
