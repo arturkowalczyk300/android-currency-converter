@@ -94,7 +94,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, MainActivity.this.getClass()));
                 return true;
             case R.id.action_settings:
-                Toast.makeText(appContext, "Action_settings clicked!", Toast.LENGTH_SHORT).show();
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
             case R.id.action_about:
                 AlertDialog.Builder alert = new AlertDialog.Builder(this)
