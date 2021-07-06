@@ -82,6 +82,9 @@ public class ListSelect extends Fragment {
         btnConvert2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!mCurrencyUtils.testAPI())
+                    ((MainActivity)getActivity()).showNetworkErrorScreen();
+
                 String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
                 String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
                 if (etFirstCurrencyValue.getText().toString().trim().length() > 0) {
@@ -127,11 +130,19 @@ public class ListSelect extends Fragment {
     }
     void fillRateValue()
     {
+
+        if(!mCurrencyUtils.testAPI())
+            ((MainActivity)getActivity()).showNetworkErrorScreen();
+
         assert(spinnerFirstCurrency.getSelectedItem().toString().length()>0 && spinnerSecondCurrency.getSelectedItem().toString().length()>0);
        textViewRate1To2.setText(Double.toString(mCurrencyUtils.getCurrencyRate(spinnerFirstCurrency.getSelectedItem().toString(), spinnerSecondCurrency.getSelectedItem().toString()) ));
         textViewRate2To1.setText(Double.toString(mCurrencyUtils.getCurrencyRate(spinnerSecondCurrency.getSelectedItem().toString(), spinnerFirstCurrency.getSelectedItem().toString()) ));
     }
     void fillSpinners() {
+
+        if(!mCurrencyUtils.testAPI())
+            ((MainActivity)getActivity()).showNetworkErrorScreen();
+
         List<String> listRates = mCurrencyUtils.getAvailableCurrencies();
         if(listRates == null)
         {

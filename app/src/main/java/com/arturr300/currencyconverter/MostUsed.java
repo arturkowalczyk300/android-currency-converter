@@ -48,13 +48,18 @@ btnClear.setOnClickListener(new View.OnClickListener()
         etUSD.setText("");
         etEUR.setText("");
         etPLN.setText("");
-        mCurrencyUtils.getCurrencyRate("USD", "PLN");
+        if( mCurrencyUtils.getCurrencyRate("USD", "PLN") ==  -100.0f)
+            ((MainActivity)getActivity()).showNetworkErrorScreen();
     }
 });
         btnConvert.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                if(!mCurrencyUtils.testAPI())
+                    ((MainActivity)getActivity()).showNetworkErrorScreen();
+
                 if (etUSD.getText().toString().trim().length() > 0) {
+
                     double USD = Double.parseDouble(etUSD.getText().toString());
                     double PLN = mCurrencyUtils.getConvertedCurrency("USD", USD, "PLN");
                     double EUR = mCurrencyUtils.getConvertedCurrency("USD", USD, "EUR");

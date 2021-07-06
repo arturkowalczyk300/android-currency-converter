@@ -16,7 +16,9 @@ import java.util.List;
 
 public class CurrencyUtils {
     boolean testAPI() {
-        return true;
+        if(this.getJSONObjectFromAPI(true, "USD")!=null)
+            return true;
+        return false;
     }
 
     JSONObject getJSONObjectFromAPI(boolean setBase, String base) {

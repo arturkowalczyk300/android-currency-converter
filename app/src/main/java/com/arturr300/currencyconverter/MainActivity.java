@@ -54,6 +54,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Context appContext;
 
+    public void showNetworkErrorScreen()
+    {
+        if(viewFragmentNetworkError!=null) {
+            tabLayout.setVisibility(View.GONE);
+            viewPager.setVisibility(View.GONE);
+            viewFragmentNetworkError.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void hideNetworkErrorScreen()
+    {
+        if(viewFragmentNetworkError!=null
+        && mCurrencyUtils.testAPI()) {
+            viewFragmentNetworkError.setVisibility(View.GONE);
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -62,12 +81,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    View viewFragmentNetworkError;
+
     //tab layout part
     TabLayout tabLayout;
     ViewPager viewPager;
     ListSelect fragmentListSelect;
     MostUsed fragmentMostUsed;
+    NetworkError fragmentNetworkError;
     MenuItem menuItemDarkMode;
+
     //other variables
     double USD2PLN;
     double USD2EUR;
@@ -139,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
         viewPagerAdapter.addFragment(fragmentMostUsed, getString(R.string.most_used));
         viewPagerAdapter.addFragment(fragmentListSelect, getString(R.string.list_select));
+
         viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_most_used);
@@ -149,6 +173,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StrictMode.setThreadPolicy(policy);
 
         df = new DecimalFormat("#.###");
+viewFragmentNetworkError = findViewById(R.id.fragmentNetworkError);
+        viewFragmentNetworkError.setVisibility(View.INVISIBLE);
+        //tabLayout.setVisibility(View.GONE);
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
