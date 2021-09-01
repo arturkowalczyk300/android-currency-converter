@@ -14,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
@@ -33,8 +34,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -92,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MenuItem menuItemDarkMode;
 
     //other variables
+    String appBuildDate;
     double USD2PLN;
     double USD2EUR;
     double EUR2PLN;
@@ -121,12 +126,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_about:
+
                 AlertDialog.Builder alert = new AlertDialog.Builder(this)
                         .setTitle(getString(R.string.menu_about))
-                        .setMessage(getString(R.string.content_about))
+                        .setMessage(getString(R.string.content_about, appBuildDate))
                         .setNeutralButton("OK", null);
                 alert.show();
-                Toast.makeText(appContext, "Action_about clicked!", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //add toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        appBuildDate = this.getAppBuildDate();
 
         //tab layout part
         tabLayout = findViewById(R.id.tabLayout);
@@ -216,5 +222,11 @@ viewFragmentNetworkError = findViewById(R.id.fragmentNetworkError);
 
     }
 
+    private String getAppBuildDate()
+    {
+        Date buildDate= BuildConfig.BUILD_TIME;
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss 'GMT'Z");
+        return dateFormat.format(buildDate);
+    }
 
 }

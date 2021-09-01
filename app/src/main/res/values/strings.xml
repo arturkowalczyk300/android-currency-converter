@@ -11,7 +11,7 @@
     <string name="menu_darkmode">Tryb ciemny</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_about">O aplikacji</string>
-    <string name="content_about">Autor: Artur Kowalczyk\nKontakt: arturkowalczyk300@gmail.com\nData kompilacji: 18.04.2021</string>
+    <string name="content_about">Autor: Artur Kowalczyk\nKontakt: arturkowalczyk300@gmail.com\nData kompilacji: %1$s </string>
     <string name="text_rate1_to2">Kurs -----&gt;:</string>
     <string name="text_rate2_to1">Kurs &lt;-----:</string>
     <string name="network_error_title">Brak dostępu do internetu!</string>
