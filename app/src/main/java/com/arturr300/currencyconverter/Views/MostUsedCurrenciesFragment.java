@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter;
+package com.arturr300.currencyconverter.Views;
 
 import android.os.Bundle;
 
@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.arturr300.currencyconverter.CurrencyUtils;
+import com.arturr300.currencyconverter.R;
 
 import java.text.DecimalFormat;
 
-public class MostUsed extends Fragment {
+public class MostUsedCurrenciesFragment extends Fragment {
 
     //components variables
     EditText etUSD;

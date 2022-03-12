@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter;
+package com.arturr300.currencyconverter.Views;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,17 +13,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arturr300.currencyconverter.CurrencyUtils;
+import com.arturr300.currencyconverter.R;
+
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
-public class ListSelect extends Fragment {
+public class AllCurrenciesFragment extends Fragment {
     final String settingsFileName = "mySettings";
     //second part
     Spinner spinnerFirstCurrency;
@@ -45,8 +47,7 @@ public class ListSelect extends Fragment {
         df = new DecimalFormat("#.###");
     }
 
-    void saveSpinnerValue()
-    {
+    void saveSpinnerValue() {
         String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
         String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
         SharedPreferences.Editor editor = getActivity().getApplicationContext().getSharedPreferences(settingsFileName, Context.MODE_PRIVATE).edit();
@@ -82,18 +83,20 @@ public class ListSelect extends Fragment {
         btnConvert2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mCurrencyUtils.testAPI())
-                    ((MainActivity)getActivity()).showNetworkErrorScreen();
+                if (!mCurrencyUtils.testAPI())
+                    ((MainActivity) getActivity()).showNetworkErrorScreen();
 
                 String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
                 String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
                 if (etFirstCurrencyValue.getText().toString().trim().length() > 0) {
                     double first = Double.parseDouble(etFirstCurrencyValue.getText().toString());
-                    double second = mCurrencyUtils.getConvertedCurrency(currencyFirst, first, currencySecond);
+                    double second = mCurrencyUtils.
+                            getConvertedCurrency(currencyFirst, first, currencySecond);
                     etSecondCurrencyValue.setText(df.format(second));
                 } else if (etSecondCurrencyValue.getText().toString().trim().length() > 0) {
                     double second = Double.parseDouble(etSecondCurrencyValue.getText().toString());
-                    double first = mCurrencyUtils.getConvertedCurrency(currencySecond, second, currencyFirst);
+                    double first = mCurrencyUtils.
+                            getConvertedCurrency(currencySecond, second, currencyFirst);
                     etFirstCurrencyValue.setText(df.format(first));
                 }
             }
@@ -128,24 +131,32 @@ public class ListSelect extends Fragment {
 
         return view;
     }
-    void fillRateValue()
-    {
 
-        if(!mCurrencyUtils.testAPI())
-            ((MainActivity)getActivity()).showNetworkErrorScreen();
+    void fillRateValue() {
 
-        assert(spinnerFirstCurrency.getSelectedItem().toString().length()>0 && spinnerSecondCurrency.getSelectedItem().toString().length()>0);
-       textViewRate1To2.setText(Double.toString(mCurrencyUtils.getCurrencyRate(spinnerFirstCurrency.getSelectedItem().toString(), spinnerSecondCurrency.getSelectedItem().toString()) ));
-        textViewRate2To1.setText(Double.toString(mCurrencyUtils.getCurrencyRate(spinnerSecondCurrency.getSelectedItem().toString(), spinnerFirstCurrency.getSelectedItem().toString()) ));
+        if (!mCurrencyUtils.testAPI())
+            ((MainActivity) getActivity()).showNetworkErrorScreen();
+
+        assert (spinnerFirstCurrency.getSelectedItem().toString().length() > 0 && spinnerSecondCurrency.getSelectedItem().toString().length() > 0);
+        textViewRate1To2.
+                setText(Double.
+                        toString(mCurrencyUtils.
+                                getCurrencyRate(spinnerFirstCurrency.getSelectedItem().toString(),
+                                        spinnerSecondCurrency.getSelectedItem().toString())));
+        textViewRate2To1.
+                setText(Double.
+                        toString(mCurrencyUtils.
+                                getCurrencyRate(spinnerSecondCurrency.getSelectedItem().toString(),
+                                        spinnerFirstCurrency.getSelectedItem().toString())));
     }
+
     void fillSpinners() {
 
-        if(!mCurrencyUtils.testAPI())
-            ((MainActivity)getActivity()).showNetworkErrorScreen();
+        if (!mCurrencyUtils.testAPI())
+            ((MainActivity) getActivity()).showNetworkErrorScreen();
 
         List<String> listRates = mCurrencyUtils.getAvailableCurrencies();
-        if(listRates == null)
-        {
+        if (listRates == null) {
             Toast.makeText(getActivity().getApplicationContext(), "Getting available currencies failed!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -163,14 +174,11 @@ public class ListSelect extends Fragment {
 
     }
 
-    void selectSpinnerItemByValue(Spinner spin, String value)
-    {
+    void selectSpinnerItemByValue(Spinner spin, String value) {
         SpinnerAdapter adapter = spin.getAdapter();
-        for(int pos=0; pos<adapter.getCount(); pos++)
-        {
-            String item = (String)adapter.getItem(pos);
-            if(item.equals(value))
-            {
+        for (int pos = 0; pos < adapter.getCount(); pos++) {
+            String item = (String) adapter.getItem(pos);
+            if (item.equals(value)) {
                 spin.setSelection(pos);
                 return;
             }

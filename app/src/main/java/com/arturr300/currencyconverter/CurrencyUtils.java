@@ -15,13 +15,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CurrencyUtils {
-    boolean testAPI() {
+    public boolean testAPI() {
         if(this.getJSONObjectFromAPI(true, "USD")!=null)
             return true;
         return false;
     }
 
-    JSONObject getJSONObjectFromAPI(boolean setBase, String base) {
+    public JSONObject getJSONObjectFromAPI(boolean setBase, String base) {
         try {
             String urlString = "https://api.frankfurter.app/latest";
             if (setBase)
@@ -43,7 +43,7 @@ public class CurrencyUtils {
         }
     }
 
-    List<String> getAvailableCurrencies() {
+    public List<String> getAvailableCurrencies() {
         try {
             JSONObject jMain = getJSONObjectFromAPI(true, "EUR");
             if (jMain == null) {
@@ -62,7 +62,7 @@ public class CurrencyUtils {
         }
     }
 
-    double getCurrencyRate(String base, String target) {
+    public double getCurrencyRate(String base, String target) {
         double jTarget;
         try {
             JSONObject jMain = getJSONObjectFromAPI(true, base);
@@ -77,7 +77,7 @@ public class CurrencyUtils {
         }
     }
 
-    double getConvertedCurrency(String baseCurrency, double baseValue, String targetCurrency) {
+    public double getConvertedCurrency(String baseCurrency, double baseValue, String targetCurrency) {
         return baseValue * getCurrencyRate(baseCurrency, targetCurrency);
     }
 

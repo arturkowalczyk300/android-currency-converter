@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter;
+package com.arturr300.currencyconverter.Views;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,39 +11,24 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
+import com.arturr300.currencyconverter.BuildConfig;
 import com.arturr300.currencyconverter.CurrencyUtils;
+import com.arturr300.currencyconverter.R;
 import com.google.android.material.tabs.TabLayout;
 //todo(4): show API state, or at least prepare it to exception occur
 //todo(2): settings activity
@@ -59,19 +44,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Context appContext;
 
-    public void showNetworkErrorScreen()
-    {
-        if(viewFragmentNetworkError!=null) {
+    public void showNetworkErrorScreen() {
+        if (viewFragmentNetworkError != null) {
             tabLayout.setVisibility(View.GONE);
             viewPager.setVisibility(View.GONE);
             viewFragmentNetworkError.setVisibility(View.VISIBLE);
         }
     }
 
-    public void hideNetworkErrorScreen()
-    {
-        if(viewFragmentNetworkError!=null
-        && mCurrencyUtils.testAPI()) {
+    public void hideNetworkErrorScreen() {
+        if (viewFragmentNetworkError != null
+                && mCurrencyUtils.testAPI()) {
             viewFragmentNetworkError.setVisibility(View.GONE);
             viewPager.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
@@ -91,9 +74,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //tab layout part
     TabLayout tabLayout;
     ViewPager viewPager;
-    ListSelect fragmentListSelect;
-    MostUsed fragmentMostUsed;
-    NetworkError fragmentNetworkError;
+    AllCurrenciesFragment listSelectFragment;
+    MostUsedCurrenciesFragment fragmentMostUsedFragment;
+    NetworkErrorFragment fragmentNetworkError;
     MenuItem menuItemDarkMode;
 
     //other variables
@@ -143,12 +126,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
-        {
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
             setTheme(R.style.DarkTheme);
-        }
-        else
-        {
+        } else {
             setTheme(R.style.LightTheme);
         }
 
@@ -162,13 +142,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //tab layout part
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
-        fragmentListSelect = new ListSelect();
-        fragmentMostUsed = new MostUsed();
+        listSelectFragment = new AllCurrenciesFragment();
+        fragmentMostUsedFragment = new MostUsedCurrenciesFragment();
         tabLayout.setupWithViewPager(viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        viewPagerAdapter.addFragment(fragmentMostUsed, getString(R.string.most_used));
-        viewPagerAdapter.addFragment(fragmentListSelect, getString(R.string.list_select));
+        viewPagerAdapter.addFragment(fragmentMostUsedFragment, getString(R.string.most_used));
+        viewPagerAdapter.addFragment(listSelectFragment, getString(R.string.list_select));
 
         viewPager.setAdapter(viewPagerAdapter);
 
@@ -180,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StrictMode.setThreadPolicy(policy);
 
         df = new DecimalFormat("#.###");
-viewFragmentNetworkError = findViewById(R.id.fragmentNetworkError);
+        viewFragmentNetworkError = findViewById(R.id.fragmentNetworkError);
         viewFragmentNetworkError.setVisibility(View.INVISIBLE);
         //tabLayout.setVisibility(View.GONE);
     }
@@ -223,9 +203,8 @@ viewFragmentNetworkError = findViewById(R.id.fragmentNetworkError);
 
     }
 
-    private String getAppBuildDate()
-    {
-        Date buildDate= BuildConfig.BUILD_TIME;
+    private String getAppBuildDate() {
+        Date buildDate = BuildConfig.BUILD_TIME;
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss 'GMT'Z");
         return dateFormat.format(buildDate);
     }
