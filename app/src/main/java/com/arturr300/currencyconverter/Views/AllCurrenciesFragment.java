@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +19,17 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.arturr300.currencyconverter.CurrencyUtils;
 import com.arturr300.currencyconverter.R;
+import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
+import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
 public class AllCurrenciesFragment extends Fragment {
+    ExchangeRatesViewModel viewModel;
+
     final String settingsFileName = "mySettings";
     //second part
     Spinner spinnerFirstCurrency;
@@ -39,7 +43,6 @@ public class AllCurrenciesFragment extends Fragment {
     TextView textViewRate2To1;
 
     DecimalFormat df;
-    CurrencyUtils mCurrencyUtils = new CurrencyUtils();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,8 @@ public class AllCurrenciesFragment extends Fragment {
     void saveSpinnerValue() {
         String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
         String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
-        SharedPreferences.Editor editor = getActivity().getApplicationContext().getSharedPreferences(settingsFileName, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getActivity().getApplicationContext().
+                getSharedPreferences(settingsFileName, Context.MODE_PRIVATE).edit();
         editor.putString("currencyFirst", currencyFirst);
         editor.putString("currencySecond", currencySecond);
         editor.apply();
@@ -72,6 +76,13 @@ public class AllCurrenciesFragment extends Fragment {
         textViewRate1To2 = view.findViewById(R.id.textViewRate1To2);
         textViewRate2To1 = view.findViewById(R.id.textViewRate2To1);
 
+        //viewmodel
+        ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(requireActivity().getApplication());
+        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(ExchangeRatesViewModel.class);
+
+
+
+
         btnClear2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,19 +94,19 @@ public class AllCurrenciesFragment extends Fragment {
         btnConvert2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mCurrencyUtils.testAPI())
+                if (!viewModel.testAPI())
                     ((MainActivity) getActivity()).showNetworkErrorScreen();
 
                 String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
                 String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
                 if (etFirstCurrencyValue.getText().toString().trim().length() > 0) {
                     double first = Double.parseDouble(etFirstCurrencyValue.getText().toString());
-                    double second = mCurrencyUtils.
+                    double second = viewModel.
                             getConvertedCurrency(currencyFirst, first, currencySecond);
                     etSecondCurrencyValue.setText(df.format(second));
                 } else if (etSecondCurrencyValue.getText().toString().trim().length() > 0) {
                     double second = Double.parseDouble(etSecondCurrencyValue.getText().toString());
-                    double first = mCurrencyUtils.
+                    double first = viewModel.
                             getConvertedCurrency(currencySecond, second, currencyFirst);
                     etFirstCurrencyValue.setText(df.format(first));
                 }
@@ -134,28 +145,29 @@ public class AllCurrenciesFragment extends Fragment {
 
     void fillRateValue() {
 
-        if (!mCurrencyUtils.testAPI())
+        if (!viewModel.testAPI())
             ((MainActivity) getActivity()).showNetworkErrorScreen();
 
-        assert (spinnerFirstCurrency.getSelectedItem().toString().length() > 0 && spinnerSecondCurrency.getSelectedItem().toString().length() > 0);
+        assert (spinnerFirstCurrency.getSelectedItem().toString().length() > 0 &&
+                spinnerSecondCurrency.getSelectedItem().toString().length() > 0);
         textViewRate1To2.
                 setText(Double.
-                        toString(mCurrencyUtils.
+                        toString(viewModel.
                                 getCurrencyRate(spinnerFirstCurrency.getSelectedItem().toString(),
                                         spinnerSecondCurrency.getSelectedItem().toString())));
         textViewRate2To1.
                 setText(Double.
-                        toString(mCurrencyUtils.
+                        toString(viewModel.
                                 getCurrencyRate(spinnerSecondCurrency.getSelectedItem().toString(),
                                         spinnerFirstCurrency.getSelectedItem().toString())));
     }
 
     void fillSpinners() {
 
-        if (!mCurrencyUtils.testAPI())
+        if (!viewModel.testAPI())
             ((MainActivity) getActivity()).showNetworkErrorScreen();
 
-        List<String> listRates = mCurrencyUtils.getAvailableCurrencies();
+        List<String> listRates = viewModel.getAvailableCurrencies();
         if (listRates == null) {
             Toast.makeText(getActivity().getApplicationContext(), "Getting available currencies failed!", Toast.LENGTH_SHORT).show();
             return;

@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
@@ -27,8 +28,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.arturr300.currencyconverter.BuildConfig;
-import com.arturr300.currencyconverter.CurrencyUtils;
 import com.arturr300.currencyconverter.R;
+import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
+import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 import com.google.android.material.tabs.TabLayout;
 //todo(4): show API state, or at least prepare it to exception occur
 //todo(2): settings activity
@@ -41,7 +43,7 @@ import com.google.android.material.tabs.TabLayout;
 //todo(9): implement MVVM/MVC
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
+    ExchangeRatesViewModel viewModel;
     Context appContext;
 
     public void showNetworkErrorScreen() {
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void hideNetworkErrorScreen() {
         if (viewFragmentNetworkError != null
-                && mCurrencyUtils.testAPI()) {
+                && viewModel.testAPI()) {
             viewFragmentNetworkError.setVisibility(View.GONE);
             viewPager.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
@@ -81,14 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //other variables
     String appBuildDate;
-    double USD2PLN;
-    double USD2EUR;
-    double EUR2PLN;
     DecimalFormat df;
-    CurrencyUtils mCurrencyUtils = new CurrencyUtils();
-
-
-    boolean darkMode = false;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -163,6 +158,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         viewFragmentNetworkError = findViewById(R.id.fragmentNetworkError);
         viewFragmentNetworkError.setVisibility(View.INVISIBLE);
         //tabLayout.setVisibility(View.GONE);
+
+        //view model handling section
+        ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(getApplication());
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(ExchangeRatesViewModel.class);
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
