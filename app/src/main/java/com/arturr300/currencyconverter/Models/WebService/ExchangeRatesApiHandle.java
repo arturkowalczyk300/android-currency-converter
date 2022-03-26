@@ -4,7 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public interface ExchangeRatesApi {
+public interface ExchangeRatesApiHandle {
     @GET("/latest")
     Call<ExchangeRateFromApiEntity> getReading(@Query("base") String baseCurrencyCode);
 }

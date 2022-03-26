@@ -5,6 +5,9 @@ import javax.annotation.Generated;
 
 import com.google.gson.annotations.Expose;
 
+import java.util.List;
+import java.util.Map;
+
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class ExchangeRateFromApiEntity {
@@ -16,7 +19,7 @@ public class ExchangeRateFromApiEntity {
     @Expose
     private String date;
     @Expose
-    private Rates rates;
+    private Map<String, Double> rates;
 
     public Double getAmount() {
         return amount;
@@ -42,11 +45,11 @@ public class ExchangeRateFromApiEntity {
         this.date = date;
     }
 
-    public Rates getRates() {
+    public Map<String, Double> getRates() {
         return rates;
     }
 
-    public void setRates(Rates rates) {
+    public void setRates(Map<String, Double> rates) {
         this.rates = rates;
     }
 

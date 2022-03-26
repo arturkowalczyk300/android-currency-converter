@@ -10,7 +10,7 @@ public class ExchangeRatesRetrofitClient {
     private static final String BASE_URL = "https://api.frankfurter.app";
     private static Retrofit retrofitInstance;
     private static OkHttpClient okHttpClientInstance;
-    private static ExchangeRatesApi exchangeRatesApiInstance;
+    private static ExchangeRatesApiHandle exchangeRatesApiInstance;
 
     private static OkHttpClient getOkHttpClientInstance() {
         if (okHttpClientInstance == null) {
@@ -35,9 +35,9 @@ public class ExchangeRatesRetrofitClient {
         return retrofitInstance;
     }
 
-    public static ExchangeRatesApi getExchangeRatesApiInstance() {
+    public static ExchangeRatesApiHandle getExchangeRatesApiInstance() {
         if (exchangeRatesApiInstance == null) {
-            exchangeRatesApiInstance = getRetrofitInstance().create(ExchangeRatesApi.class);
+            exchangeRatesApiInstance = getRetrofitInstance().create(ExchangeRatesApiHandle.class);
         }
         return exchangeRatesApiInstance;
     }
