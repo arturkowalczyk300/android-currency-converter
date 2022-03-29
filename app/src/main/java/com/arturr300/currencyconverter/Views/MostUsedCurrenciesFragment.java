@@ -3,6 +3,7 @@ package com.arturr300.currencyconverter.Views;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -29,10 +30,15 @@ public class MostUsedCurrenciesFragment extends Fragment {
     Button btnConvert;
     DecimalFormat df;
 
+    boolean isApiWorking;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         df = new DecimalFormat("#.###");
+
+
     }
 
     @Override
@@ -50,6 +56,12 @@ public class MostUsedCurrenciesFragment extends Fragment {
         ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(requireActivity().getApplication());
         viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(ExchangeRatesViewModel.class);
 
+        viewModel.getApiWorking().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                isApiWorking = aBoolean.booleanValue();
+            }
+        });
 
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,16 +69,11 @@ public class MostUsedCurrenciesFragment extends Fragment {
                 etUSD.setText("");
                 etEUR.setText("");
                 etPLN.setText("");
-                if (viewModel.getCurrencyRate("USD", "PLN") == -100.0f)
-                    ((MainActivity) getActivity()).showNetworkErrorScreen();
             }
         });
         btnConvert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!viewModel.testAPI())
-                    ((MainActivity) getActivity()).showNetworkErrorScreen();
-
                 if (etUSD.getText().toString().trim().length() > 0) {
 
                     double USD = Double.parseDouble(etUSD.getText().toString());

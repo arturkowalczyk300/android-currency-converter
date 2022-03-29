@@ -14,7 +14,7 @@
     <string name="content_about">Autor: Artur Kowalczyk\nKontakt: arturkowalczyk300@gmail.com\nData kompilacji: %1$s </string>
     <string name="text_rate1_to2">Kurs -----&gt;:</string>
     <string name="text_rate2_to1">Kurs &lt;-----:</string>
-    <string name="network_error_title">Brak dostępu do internetu!</string>
+    <string name="network_error_title">Brak dostępu do internetu\nlub nieprawidłowa odpowiedź z usługi!</string>
     <string name="network_error_description">Możliwe rozwiązania:\n
         1. Włącz dane mobilne (mogą zostać pobrane opłaty)lub dostęp do sieci Wi-Fi\n
         2. Uruchom aplikację od nowa\n

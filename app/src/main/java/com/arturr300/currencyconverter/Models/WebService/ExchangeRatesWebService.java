@@ -5,18 +5,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.MutableLiveData;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.net.URL;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,8 +22,8 @@ public class ExchangeRatesWebService {
 
     private class DataToReturn //temp
     {
-        boolean apiWorking;
-        List<String> availableCurrencies = new ArrayList<String>();
+        MutableLiveData<Boolean> apiWorking;
+        MutableLiveData<List<String>> availableCurrencies = new MutableLiveData<>();
         Map<String, Double> currenciesRates = new Map<String, Double>() {
             @Override
             public int size() {
@@ -98,6 +91,10 @@ public class ExchangeRatesWebService {
                 return null;
             }
         } ;
+
+        public DataToReturn(){
+            apiWorking = new MutableLiveData<>();
+        }
     }
 
     ExchangeRatesApiHandle apiHandle;
@@ -126,11 +123,15 @@ public class ExchangeRatesWebService {
 
                 if (response.isSuccessful()) {
                     //here tinkering with data
-                    dataToReturn.apiWorking = true;
+                    dataToReturn.apiWorking.setValue( true);
 
-                    dataToReturn.availableCurrencies.clear();
+                    ArrayList<String> currencies = new ArrayList<>();
+
+                    currencies.clear();
+                    currencies.addAll(response.body().getRates().keySet());
+                    dataToReturn.availableCurrencies.setValue(currencies);
+
                     dataToReturn.currenciesRates.clear();
-                    dataToReturn.availableCurrencies.addAll(response.body().getRates().keySet());
                     dataToReturn.currenciesRates = response.body().getRates();
                 }
 
@@ -146,11 +147,11 @@ public class ExchangeRatesWebService {
 
     }
 
-    public boolean testAPI() {
+    public MutableLiveData<Boolean> getApiWorking() {
         return dataToReturn.apiWorking;
     }
 
-    public List<String> getAvailableCurrencies() {
+    public MutableLiveData<List<String>> getAvailableCurrencies() {
         return dataToReturn.availableCurrencies;
     }
 
@@ -175,5 +176,10 @@ public class ExchangeRatesWebService {
 
     public void sendErrorCallEnqueueFailure() {
 
+    }
+
+    public void refreshData()
+    {
+        getApiReading(false, "");
     }
 }

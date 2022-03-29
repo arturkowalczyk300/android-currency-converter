@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,6 +45,9 @@ public class AllCurrenciesFragment extends Fragment {
     TextView textViewRate2To1;
 
     DecimalFormat df;
+
+    boolean isApiWorking;
+    List<String> listRates;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,11 +81,26 @@ public class AllCurrenciesFragment extends Fragment {
         textViewRate1To2 = view.findViewById(R.id.textViewRate1To2);
         textViewRate2To1 = view.findViewById(R.id.textViewRate2To1);
 
+        listRates = new ArrayList<>();
+
         //viewmodel
         ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(requireActivity().getApplication());
         viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(ExchangeRatesViewModel.class);
 
-
+        //observe live data objects
+        viewModel.getApiWorking().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                isApiWorking = aBoolean.booleanValue();
+            }
+        });
+        viewModel.getAvailableCurrencies().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> strings) {
+                listRates = strings;
+                fillSpinners();
+            }
+        });
 
 
         btnClear2.setOnClickListener(new View.OnClickListener() {
@@ -94,9 +114,6 @@ public class AllCurrenciesFragment extends Fragment {
         btnConvert2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!viewModel.testAPI())
-                    ((MainActivity) getActivity()).showNetworkErrorScreen();
-
                 String currencyFirst = spinnerFirstCurrency.getSelectedItem().toString();
                 String currencySecond = spinnerSecondCurrency.getSelectedItem().toString();
                 if (etFirstCurrencyValue.getText().toString().trim().length() > 0) {
@@ -113,7 +130,7 @@ public class AllCurrenciesFragment extends Fragment {
             }
         });
 
-        fillSpinners();
+
 
         spinnerFirstCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -144,10 +161,6 @@ public class AllCurrenciesFragment extends Fragment {
     }
 
     void fillRateValue() {
-
-        if (!viewModel.testAPI())
-            ((MainActivity) getActivity()).showNetworkErrorScreen();
-
         assert (spinnerFirstCurrency.getSelectedItem().toString().length() > 0 &&
                 spinnerSecondCurrency.getSelectedItem().toString().length() > 0);
         textViewRate1To2.
@@ -163,16 +176,11 @@ public class AllCurrenciesFragment extends Fragment {
     }
 
     void fillSpinners() {
-
-        if (!viewModel.testAPI())
-            ((MainActivity) getActivity()).showNetworkErrorScreen();
-
-        List<String> listRates = viewModel.getAvailableCurrencies();
         if (listRates == null) {
             Toast.makeText(getActivity().getApplicationContext(), "Getting available currencies failed!", Toast.LENGTH_SHORT).show();
             return;
         }
-        listRates.add("EUR"); //it is base currency, so rates JSONObject not contains it ; it must be added manually
+
         Collections.sort(listRates);
         ArrayAdapter<String> aa = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, listRates);
         spinnerFirstCurrency.setAdapter(aa);

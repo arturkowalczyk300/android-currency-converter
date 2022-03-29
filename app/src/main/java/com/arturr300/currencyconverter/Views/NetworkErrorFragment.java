@@ -70,7 +70,7 @@ public class NetworkErrorFragment extends Fragment {
         buttonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).hideNetworkErrorScreen();
+                ((MainActivity)getActivity()).refreshData();
             }
         });
 

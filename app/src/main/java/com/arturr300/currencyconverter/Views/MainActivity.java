@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -46,6 +47,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ExchangeRatesViewModel viewModel;
     Context appContext;
 
+    boolean isApiWorking;
+
+    public void checkNetworkState()
+    {
+        if(isApiWorking)
+            hideNetworkErrorScreen();
+        else
+            showNetworkErrorScreen();
+    }
+
     public void showNetworkErrorScreen() {
         if (viewFragmentNetworkError != null) {
             tabLayout.setVisibility(View.GONE);
@@ -55,8 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void hideNetworkErrorScreen() {
-        if (viewFragmentNetworkError != null
-                && viewModel.testAPI()) {
+        if (viewFragmentNetworkError != null && isApiWorking) {
             viewFragmentNetworkError.setVisibility(View.GONE);
             viewPager.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
@@ -162,6 +172,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //view model handling section
         ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(getApplication());
         viewModel = new ViewModelProvider(this, viewModelFactory).get(ExchangeRatesViewModel.class);
+
+        //observe live data
+        viewModel.getApiWorking().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                isApiWorking = aBoolean.booleanValue();
+                checkNetworkState();
+            }
+        });
+        checkNetworkState();
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -206,6 +226,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Date buildDate = BuildConfig.BUILD_TIME;
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss 'GMT'Z");
         return dateFormat.format(buildDate);
+    }
+
+    public void refreshData()
+    {
+        viewModel.refreshData();
     }
 
 }
