@@ -18,6 +18,7 @@ public class ExchangeRatesViewModel extends ViewModel {
     public ExchangeRatesViewModel(@NonNull Application application) {
         repository = new ExchangeRatesRepository();
         mutableLiveDataAvailableCurrencies = new MutableLiveData<>();
+        refreshData();
     }
 
     public LiveData<Boolean> getApiWorking() {

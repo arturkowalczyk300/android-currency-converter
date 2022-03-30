@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -108,10 +109,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     item.setChecked(true);
                 }
                 finish(); //destroy activity
-                startActivity(new Intent(MainActivity.this, MainActivity.this.getClass()));
+                Intent mainActivityIntent =new Intent(MainActivity.this, MainActivity.this.getClass());
+                startActivity(mainActivityIntent);
                 return true;
             case R.id.action_settings:
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_about:

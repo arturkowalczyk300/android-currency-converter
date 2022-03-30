@@ -103,7 +103,6 @@ public class ExchangeRatesWebService {
     public ExchangeRatesWebService() {
         apiHandle = ExchangeRatesRetrofitClient.getExchangeRatesApiInstance();
         dataToReturn = new DataToReturn();
-        getApiReading(false, "");
     }
 
     public void getApiReading(boolean setBase, String base) {
