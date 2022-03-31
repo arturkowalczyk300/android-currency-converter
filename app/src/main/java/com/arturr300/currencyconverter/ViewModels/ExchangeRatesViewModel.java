@@ -1,23 +1,22 @@
 package com.arturr300.currencyconverter.ViewModels;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.arturr300.currencyconverter.Models.ExchangeRatesRepository;
-
-import java.util.List;
+import java.util.TreeMap;
 
 public class ExchangeRatesViewModel extends ViewModel {
     private ExchangeRatesRepository repository;
-    private MutableLiveData<List<String>> mutableLiveDataAvailableCurrencies;
+    private MutableLiveData<TreeMap<String, Double>> currenciesRates;
 
     public ExchangeRatesViewModel(@NonNull Application application) {
         repository = new ExchangeRatesRepository();
-        mutableLiveDataAvailableCurrencies = new MutableLiveData<>();
+        currenciesRates = getCurrenciesRates();
         refreshData();
     }
 
@@ -25,20 +24,37 @@ public class ExchangeRatesViewModel extends ViewModel {
         return repository.getApiWorking();
     }
 
-    public LiveData<List<String>> getAvailableCurrencies() {
-        return repository.getAvailableCurrencies();
+    public MutableLiveData<TreeMap<String, Double>> getCurrenciesRates() {
+        return repository.getCurrenciesRates();
     }
 
     public double getCurrencyRate(String base, String target) {
-        return repository.getCurrencyRate(base, target);
+        try{
+            return currenciesRates.getValue().get(target);
+        }
+        catch(Exception ex)
+        {
+            Log.e("", ex.toString());
+        }
+        return -1.0;
     }
 
     public double getConvertedCurrency(String baseCurrency, double baseValue, String targetCurrency) {
-        return repository.getConvertedCurrency(baseCurrency, baseValue, targetCurrency);
+        return baseValue * getCurrencyRate(baseCurrency, targetCurrency);
     }
 
     public void refreshData()
     {
         repository.refreshData();
+    }
+
+    public MutableLiveData<Boolean> getMutableLiveDataInfoResponseSuccess() {
+        return repository.getMutableLiveDataInfoResponseSuccess();
+    }
+    public MutableLiveData<Boolean> getMutableLiveDataErrorResponseBodyNull() {
+        return repository.getMutableLiveDataErrorResponseBodyNull();
+    }
+    public MutableLiveData<Boolean> getMutableLiveDataErrorCallEnqueueFailure() {
+        return repository.getMutableLiveDataErrorCallEnqueueFailure();
     }
 }

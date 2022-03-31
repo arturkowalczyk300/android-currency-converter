@@ -2,11 +2,8 @@
 package com.arturr300.currencyconverter.Models.WebService;
 
 import javax.annotation.Generated;
-
 import com.google.gson.annotations.Expose;
-
-import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
@@ -19,7 +16,7 @@ public class ExchangeRateFromApiEntity {
     @Expose
     private String date;
     @Expose
-    private Map<String, Double> rates;
+    private TreeMap<String, Double> rates;
 
     public Double getAmount() {
         return amount;
@@ -45,11 +42,11 @@ public class ExchangeRateFromApiEntity {
         this.date = date;
     }
 
-    public Map<String, Double> getRates() {
+    public TreeMap<String, Double> getRates() {
         return rates;
     }
 
-    public void setRates(Map<String, Double> rates) {
+    public void setRates(TreeMap<String, Double> rates) {
         this.rates = rates;
     }
 
