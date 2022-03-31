@@ -51,4 +51,5 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "javax.annotation:javax.annotation-api:$javax_annotation_version"
+    implementation 'com.pranavpandey.android:dynamic-toasts:4.1.0'
 }

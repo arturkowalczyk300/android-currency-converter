@@ -23,11 +23,11 @@ import android.widget.Toast;
 import com.arturr300.currencyconverter.R;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 
 public class AllCurrenciesFragment extends Fragment {
     ExchangeRatesViewModel viewModel;
@@ -47,7 +47,7 @@ public class AllCurrenciesFragment extends Fragment {
     DecimalFormat df;
 
     boolean isApiWorking;
-    List<String> listRates;
+    TreeMap<String, Double> listRates;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ public class AllCurrenciesFragment extends Fragment {
         textViewRate1To2 = view.findViewById(R.id.textViewRate1To2);
         textViewRate2To1 = view.findViewById(R.id.textViewRate2To1);
 
-        listRates = new ArrayList<>();
+        listRates = new TreeMap<String, Double>();
 
         //viewmodel
         ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(requireActivity().getApplication());
@@ -94,9 +94,9 @@ public class AllCurrenciesFragment extends Fragment {
                 isApiWorking = aBoolean.booleanValue();
             }
         });
-        viewModel.getAvailableCurrencies().observe(this, new Observer<List<String>>() {
+        viewModel.getCurrenciesRates().observe(this, new Observer<TreeMap<String, Double>>() {
             @Override
-            public void onChanged(List<String> strings) {
+            public void onChanged(TreeMap<String, Double> strings) {
                 listRates = strings;
                 fillSpinners();
             }
@@ -181,8 +181,11 @@ public class AllCurrenciesFragment extends Fragment {
             return;
         }
 
-        Collections.sort(listRates);
-        ArrayAdapter<String> aa = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, listRates);
+        List<String> currenciesList = new ArrayList<>(listRates.keySet());
+
+        ArrayAdapter<String> aa = new ArrayAdapter<>
+                (getActivity().getApplicationContext(),
+                android.R.layout.simple_spinner_dropdown_item, currenciesList);
         spinnerFirstCurrency.setAdapter(aa);
         spinnerSecondCurrency.setAdapter(aa);
 

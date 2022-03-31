@@ -20,4 +20,8 @@
         2. Uruchom aplikację od nowa\n
         3. Skontaktuj się z autorem aplikacji</string>
     <string name="network_error_retry">Spróbuj ponownie</string>
+    <string name="settings_display_debug_toasts">Display debug toasts</string>
+    <string name="toastErrorApiReponseBodyNull">API response body null!</string>
+    <string name="toastSuccessApiResponse">API response success!</string>
+    <string name="toastErrorApiCallEnqueue">API response call enqueue failed!</string>
 </resources>

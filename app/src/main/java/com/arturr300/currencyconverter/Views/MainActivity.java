@@ -30,13 +30,13 @@ import java.util.Date;
 import java.util.List;
 
 import com.arturr300.currencyconverter.BuildConfig;
+import com.arturr300.currencyconverter.Preferences.PreferencesRepository;
 import com.arturr300.currencyconverter.R;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 import com.google.android.material.tabs.TabLayout;
+import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 //todo(4): show API state, or at least prepare it to exception occur
-//todo(2): settings activity
-//todo(3): about activity
 //todo(6): add history (graph, trend)
 //todo(7): landscape orientation
 //todo(8): refactor
@@ -45,46 +45,19 @@ import com.google.android.material.tabs.TabLayout;
 //todo(9): implement MVVM/MVC
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    //static variables
+    public static final String INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS = "com.arturkowalczyk300.currencyconverter.INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS";
+    public static final String REQUEST_CODE_SETTINGS_ACTIVITY = "com.arturkowalczyk300.currencyconverter.REQUEST_CODE_SETTINGS_ACTIVITY";
+
+    //non-static variables
     ExchangeRatesViewModel viewModel;
+    PreferencesRepository preferencesRepository;
     Context appContext;
-
     boolean isApiWorking;
-
-    public void checkNetworkState()
-    {
-        if(isApiWorking)
-            hideNetworkErrorScreen();
-        else
-            showNetworkErrorScreen();
-    }
-
-    public void showNetworkErrorScreen() {
-        if (viewFragmentNetworkError != null) {
-            tabLayout.setVisibility(View.GONE);
-            viewPager.setVisibility(View.GONE);
-            viewFragmentNetworkError.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void hideNetworkErrorScreen() {
-        if (viewFragmentNetworkError != null && isApiWorking) {
-            viewFragmentNetworkError.setVisibility(View.GONE);
-            viewPager.setVisibility(View.VISIBLE);
-            tabLayout.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        menuItemDarkMode = menu.findItem(R.id.action_darkmode);
-        menuItemDarkMode.setChecked((AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES));
-        return true;
-    }
-
     View viewFragmentNetworkError;
 
-    //tab layout part
+    //      tab layout part
     TabLayout tabLayout;
     ViewPager viewPager;
     AllCurrenciesFragment listSelectFragment;
@@ -92,42 +65,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     NetworkErrorFragment fragmentNetworkError;
     MenuItem menuItemDarkMode;
 
-    //other variables
+    //      other variables
     String appBuildDate;
     DecimalFormat df;
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //HandleItem selection
-        switch (item.getItemId()) {
-            case R.id.action_darkmode:
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    item.setChecked(false);
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    item.setChecked(true);
-                }
-                finish(); //destroy activity
-                Intent mainActivityIntent =new Intent(MainActivity.this, MainActivity.this.getClass());
-                startActivity(mainActivityIntent);
-                return true;
-            case R.id.action_settings:
-                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(settingsIntent);
-                return true;
-            case R.id.action_about:
+    //constructor
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.menu_about))
-                        .setMessage(getString(R.string.content_about, appBuildDate))
-                        .setNeutralButton("OK", null);
-                alert.show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+    //methods
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +119,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(getApplication());
         viewModel = new ViewModelProvider(this, viewModelFactory).get(ExchangeRatesViewModel.class);
 
+        //preferences repository
+        preferencesRepository = new PreferencesRepository(getApplicationContext());
+
         //observe live data
         viewModel.getApiWorking().observe(this, new Observer<Boolean>() {
             @Override
@@ -184,6 +131,93 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         checkNetworkState();
+        viewModel.getMutableLiveDataInfoResponseSuccess().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                    DynamicToast.makeSuccess(appContext, getString(R.string.toastSuccessApiResponse)).show();
+            }
+        });
+        viewModel.getMutableLiveDataErrorResponseBodyNull().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                    DynamicToast.makeError(appContext, getString(R.string.toastErrorApiReponseBodyNull)).show();
+            }
+        });
+        viewModel.getMutableLiveDataErrorCallEnqueueFailure().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                    DynamicToast.makeError(appContext, getString(R.string.toastErrorApiCallEnqueue)).show();
+            }
+        });
+    }
+
+    public void checkNetworkState()
+    {
+        if(isApiWorking)
+            hideNetworkErrorScreen();
+        else
+            showNetworkErrorScreen();
+    }
+
+    public void showNetworkErrorScreen() {
+        if (viewFragmentNetworkError != null) {
+            tabLayout.setVisibility(View.GONE);
+            viewPager.setVisibility(View.GONE);
+            viewFragmentNetworkError.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void hideNetworkErrorScreen() {
+        if (viewFragmentNetworkError != null && isApiWorking) {
+            viewFragmentNetworkError.setVisibility(View.GONE);
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        menuItemDarkMode = menu.findItem(R.id.action_darkmode);
+        menuItemDarkMode.setChecked((AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //HandleItem selection
+        switch (item.getItemId()) {
+            case R.id.action_darkmode:
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    item.setChecked(false);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    item.setChecked(true);
+                }
+                finish(); //destroy activity
+                Intent mainActivityIntent =new Intent(MainActivity.this, MainActivity.this.getClass());
+                startActivity(mainActivityIntent);
+                return true;
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                settingsIntent.putExtra(this.INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS, preferencesRepository.isSettingDisplayDebugToasts());
+                startActivityForResult(settingsIntent,  REQUEST_CODE_SETTINGS_ACTIVITY);
+                return true;
+            case R.id.action_about:
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.menu_about))
+                        .setMessage(getString(R.string.content_about, appBuildDate))
+                        .setNeutralButton("OK", null);
+                alert.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
