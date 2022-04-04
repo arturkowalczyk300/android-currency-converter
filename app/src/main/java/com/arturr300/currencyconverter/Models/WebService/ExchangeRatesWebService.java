@@ -1,18 +1,9 @@
 package com.arturr300.currencyconverter.Models.WebService;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import retrofit2.Call;
@@ -49,40 +40,41 @@ public class ExchangeRatesWebService {
     public MutableLiveData<Boolean> getApiWorking() {
         return apiWorking;
     }
-    public void refreshData() {
-        getApiReading(DEFAULT_BASE_CURRENCY);
+    public void requestRatesData() {
+        requestApiReading(DEFAULT_BASE_CURRENCY);
     }
 
-    public void getApiReading(String base) {
+    private Callback<ExchangeRateFromApiEntity> responseCallback = new Callback<ExchangeRateFromApiEntity>() {
+        @Override
+        public void onResponse(Call<ExchangeRateFromApiEntity> call,
+                               Response<ExchangeRateFromApiEntity> response) {
+            if (response.body() == null) {
+                sendErrorResponseBodyNull();
+            }
+
+            if (response.isSuccessful()) {
+                sendInfoResponseSuccess();
+                apiWorking.setValue(true);
+
+                TreeMap<String, Double> currenciesRatesTreeMap = currenciesRates.getValue();
+                currenciesRatesTreeMap.clear();
+                currenciesRatesTreeMap.putAll(response.body().getRates());
+                currenciesRates.setValue(currenciesRatesTreeMap);
+                //Log.e("artur", "currencies rates set value");
+            }
+        }
+
+        @Override
+        public void onFailure(Call<ExchangeRateFromApiEntity> call, Throwable t) {
+            sendErrorCallEnqueueFailure();
+        }
+    };
+
+    public void requestApiReading(String base) {
         Call<ExchangeRateFromApiEntity> apiReading;
         apiReading = apiHandle.getReading(base);
 
-        apiReading.enqueue(new Callback<ExchangeRateFromApiEntity>() {
-            @Override
-            public void onResponse(Call<ExchangeRateFromApiEntity> call,
-                                   Response<ExchangeRateFromApiEntity> response) {
-                if (response.body() == null) {
-                    sendErrorResponseBodyNull();
-                }
-
-                if (response.isSuccessful()) {
-                    sendInfoResponseSuccess();
-                    apiWorking.setValue(true);
-
-                    ArrayList<String> currencies = new ArrayList<>();
-
-                    currenciesRates.getValue().clear();
-                    currenciesRates.getValue().putAll(response.body().getRates());
-                }
-            }
-
-
-            @Override
-            public void onFailure(Call<ExchangeRateFromApiEntity> call, Throwable t) {
-                sendErrorCallEnqueueFailure();
-            }
-        });
-
+        apiReading.enqueue(responseCallback);
     }
 
     public MutableLiveData<TreeMap<String, Double>> getCurrenciesRates() {

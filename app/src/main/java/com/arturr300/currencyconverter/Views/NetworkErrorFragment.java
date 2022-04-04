@@ -70,7 +70,7 @@ public class NetworkErrorFragment extends Fragment {
         buttonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).refreshData();
+                ((MainActivity)getActivity()).fetchData(getString(R.string.DEFAULT_CURRENCY));
             }
         });
 
