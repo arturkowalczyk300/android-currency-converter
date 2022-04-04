@@ -16,12 +16,12 @@ public class ExchangeRatesRepository {
     }
 
     //methods
-    public MutableLiveData<Boolean> getApiWorking() {
+    public MutableLiveData<Boolean> isApiWorking() {
         return webService.getApiWorking();
     }
-    public void refreshData()
+    public void requestRatesData(String baseCurrency)
     {
-        webService.refreshData();
+        webService.requestRatesData();
     }
     public MutableLiveData<TreeMap<String, Double>> getCurrenciesRates() {
         return webService.getCurrenciesRates();

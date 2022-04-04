@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //static variables
     public static final String INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS = "com.arturkowalczyk300.currencyconverter.INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS";
-    public static final String REQUEST_CODE_SETTINGS_ACTIVITY = "com.arturkowalczyk300.currencyconverter.REQUEST_CODE_SETTINGS_ACTIVITY";
+    public static final int REQUEST_CODE_SETTINGS_ACTIVITY = 110;
 
     //non-static variables
     ExchangeRatesViewModel viewModel;
@@ -68,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //      other variables
     String appBuildDate;
     DecimalFormat df;
+
+    //handle data request and response
+
 
     //constructor
 
@@ -94,7 +96,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         listSelectFragment = new AllCurrenciesFragment();
+        listSelectFragment.setMainLifecycleOwner(this);
         fragmentMostUsedFragment = new MostUsedCurrenciesFragment();
+        fragmentMostUsedFragment.setMainLifecycleOwner(this);
         tabLayout.setupWithViewPager(viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
@@ -123,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         preferencesRepository = new PreferencesRepository(getApplicationContext());
 
         //observe live data
-        viewModel.getApiWorking().observe(this, new Observer<Boolean>() {
+        viewModel.isApiWorking().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 isApiWorking = aBoolean.booleanValue();
@@ -134,29 +138,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         viewModel.getMutableLiveDataInfoResponseSuccess().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                if (aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
                     DynamicToast.makeSuccess(appContext, getString(R.string.toastSuccessApiResponse)).show();
             }
         });
         viewModel.getMutableLiveDataErrorResponseBodyNull().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                if (aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
                     DynamicToast.makeError(appContext, getString(R.string.toastErrorApiReponseBodyNull)).show();
             }
         });
         viewModel.getMutableLiveDataErrorCallEnqueueFailure().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                if (aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
                     DynamicToast.makeError(appContext, getString(R.string.toastErrorApiCallEnqueue)).show();
+            }
+        });
+
+        viewModel.getMutableLiveDataErrorCurrencyRatesTreeMapEmpty().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                    DynamicToast.makeError(appContext, getString(R.string.toastErrorCurrencyRatesTreeMapEmpty)).show();
             }
         });
     }
 
-    public void checkNetworkState()
-    {
-        if(isApiWorking)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SETTINGS_ACTIVITY && resultCode == RESULT_OK) {
+            boolean settingDisplayDebugToasts = data.getBooleanExtra(this.INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS, false);
+            preferencesRepository.setSettingDisplayDebugToasts(settingDisplayDebugToasts);
+
+            if (preferencesRepository.isSettingDisplayDebugToasts())
+                DynamicToast.makeSuccess(this, "Settings saved!");
+        }
+    }
+
+    public void checkNetworkState() {
+        if (isApiWorking)
             hideNetworkErrorScreen();
         else
             showNetworkErrorScreen();
@@ -199,13 +223,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     item.setChecked(true);
                 }
                 finish(); //destroy activity
-                Intent mainActivityIntent =new Intent(MainActivity.this, MainActivity.this.getClass());
+                Intent mainActivityIntent = new Intent(MainActivity.this, MainActivity.this.getClass());
                 startActivity(mainActivityIntent);
                 return true;
             case R.id.action_settings:
                 Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 settingsIntent.putExtra(this.INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS, preferencesRepository.isSettingDisplayDebugToasts());
-                startActivityForResult(settingsIntent,  REQUEST_CODE_SETTINGS_ACTIVITY);
+                startActivityForResult(settingsIntent, REQUEST_CODE_SETTINGS_ACTIVITY);
                 return true;
             case R.id.action_about:
 
@@ -260,13 +284,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String getAppBuildDate() {
         Date buildDate = BuildConfig.BUILD_TIME;
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss 'GMT'Z");
+        DateFormat dateFormat = new SimpleDateFormat(getString(R.string.DEFAULT_DATE_FORMAT));
         return dateFormat.format(buildDate);
     }
 
-    public void refreshData()
-    {
-        viewModel.refreshData();
+    public void fetchData(String baseCurrency) {
+        viewModel.getCurrenciesList(); //todo: refactor
     }
 
 }

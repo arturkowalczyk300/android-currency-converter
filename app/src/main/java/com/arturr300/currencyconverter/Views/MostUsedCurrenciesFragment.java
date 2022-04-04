@@ -2,7 +2,9 @@ package com.arturr300.currencyconverter.Views;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -11,16 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.arturr300.currencyconverter.R;
+import com.arturr300.currencyconverter.ViewModels.ConversionResult;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MostUsedCurrenciesFragment extends Fragment {
     ExchangeRatesViewModel viewModel;
+    AppCompatActivity mainLifecycleOwner;
 
     //components variables
     EditText etUSD;
@@ -31,6 +39,7 @@ public class MostUsedCurrenciesFragment extends Fragment {
     DecimalFormat df;
 
     boolean isApiWorking;
+    String baseCurrency;
 
 
     @Override
@@ -56,7 +65,7 @@ public class MostUsedCurrenciesFragment extends Fragment {
         ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(requireActivity().getApplication());
         viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(ExchangeRatesViewModel.class);
 
-        viewModel.getApiWorking().observe(this, new Observer<Boolean>() {
+        viewModel.isApiWorking().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 isApiWorking = aBoolean.booleanValue();
@@ -74,33 +83,65 @@ public class MostUsedCurrenciesFragment extends Fragment {
         btnConvert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etUSD.getText().toString().trim().length() > 0) {
-
-                    double USD = Double.parseDouble(etUSD.getText().toString());
-                    double PLN = viewModel.getConvertedCurrency("USD", USD, "PLN");
-                    double EUR = viewModel.getConvertedCurrency("USD", USD, "EUR");
-                    etPLN.setText(Double.toString(PLN));
-                    etEUR.setText(Double.toString(EUR));
-                } else if (etEUR.getText().toString().trim().length() > 0) {
-                    double EUR = Double.parseDouble(etEUR.getText().toString());
-                    double PLN = viewModel.getConvertedCurrency("EUR", EUR, "PLN");
-                    double USD = viewModel.getConvertedCurrency("EUR", EUR, "USD");
-                    etUSD.setText(Double.toString(USD));
-                    etPLN.setText(Double.toString(PLN));
-                } else if (etPLN.getText().toString().trim().length() > 0) {
-                    double PLN = Double.parseDouble(etPLN.getText().toString());
-                    double EUR = viewModel.getConvertedCurrency("PLN", PLN, "EUR");
-                    double USD = viewModel.getConvertedCurrency("PLN", PLN, "USD");
-                    etUSD.setText(Double.toString(USD));
-                    etEUR.setText(Double.toString(EUR));
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Enter value", Toast.LENGTH_SHORT).show();
-                }
+                displayConversionResults();
             }
         });
         // Inflate the layout for this fragment
 
 
         return view;
+    }
+
+    private void displayConversionResults() {
+        ArrayList<String> targetCurrencies = new ArrayList<>(Arrays.asList());
+        baseCurrency = "";
+        Double sourceAmount = Double.MIN_VALUE;
+        if (etUSD.getText().toString().trim().length() > 0) {
+            baseCurrency = "USD";
+            sourceAmount = Double.parseDouble(etUSD.getText().toString());
+            targetCurrencies = new ArrayList<>(Arrays.asList("EUR", "PLN"));
+        } else if (etEUR.getText().toString().trim().length() > 0) {
+            baseCurrency = "EUR";
+            sourceAmount = Double.parseDouble(etEUR.getText().toString());
+            targetCurrencies = new ArrayList<>(Arrays.asList("USD", "PLN"));
+        } else if (etPLN.getText().toString().trim().length() > 0) {
+            baseCurrency = "PLN";
+            sourceAmount = Double.parseDouble(etPLN.getText().toString());
+            targetCurrencies = new ArrayList<>(Arrays.asList("USD", "EUR"));
+        }
+
+        viewModel.convertMultipleCurrencies(baseCurrency, sourceAmount, targetCurrencies).observe(mainLifecycleOwner, new Observer<List<ConversionResult>>() {
+            @Override
+            public void onChanged(List<ConversionResult> conversionResults) {
+                fillFields(conversionResults);
+            }
+        });
+
+
+    }
+
+    private void fillFields(List<ConversionResult> conversionResultsList) {
+        if (baseCurrency == "USD") { //todo: remove code repetitions
+            double PLN = conversionResultsList.get(conversionResultsList.indexOf("PLN")).resultAmount;
+            double EUR = conversionResultsList.get(conversionResultsList.indexOf("EUR")).resultAmount;
+            etPLN.setText(Double.toString(PLN));
+            etEUR.setText(Double.toString(EUR));
+        } else if (baseCurrency == "EUR") {
+            double PLN = conversionResultsList.get(conversionResultsList.indexOf("PLN")).resultAmount;
+            double USD = conversionResultsList.get(conversionResultsList.indexOf("USD")).resultAmount;
+            etUSD.setText(Double.toString(USD));
+            etPLN.setText(Double.toString(PLN));
+        } else if (baseCurrency == "PLN") {
+            double EUR = conversionResultsList.get(conversionResultsList.indexOf("EUR")).resultAmount;
+            double USD = conversionResultsList.get(conversionResultsList.indexOf("USD")).resultAmount;
+            etUSD.setText(Double.toString(USD));
+            etEUR.setText(Double.toString(EUR));
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), "Enter value", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void setMainLifecycleOwner(AppCompatActivity mainLifecycleOwner) {
+        this.mainLifecycleOwner = mainLifecycleOwner;
     }
 }
