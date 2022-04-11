@@ -40,8 +40,9 @@ public class ExchangeRatesWebService {
     public MutableLiveData<Boolean> getApiWorking() {
         return apiWorking;
     }
-    public void requestRatesData() {
-        requestApiReading(DEFAULT_BASE_CURRENCY);
+
+    public void requestRatesData(String baseCurrency) {
+        requestApiReading(baseCurrency);
     }
 
     private Callback<ExchangeRateFromApiEntity> responseCallback = new Callback<ExchangeRateFromApiEntity>() {
@@ -60,7 +61,6 @@ public class ExchangeRatesWebService {
                 currenciesRatesTreeMap.clear();
                 currenciesRatesTreeMap.putAll(response.body().getRates());
                 currenciesRates.setValue(currenciesRatesTreeMap);
-                //Log.e("artur", "currencies rates set value");
             }
         }
 
@@ -70,9 +70,10 @@ public class ExchangeRatesWebService {
         }
     };
 
-    public void requestApiReading(String base) {
+    public void requestApiReading(String baseCurrency) {
         Call<ExchangeRateFromApiEntity> apiReading;
-        apiReading = apiHandle.getReading(base);
+        apiReading = apiHandle.getReading(baseCurrency);
+        Log.e("myApp", "base currency=" + baseCurrency);
 
         apiReading.enqueue(responseCallback);
     }

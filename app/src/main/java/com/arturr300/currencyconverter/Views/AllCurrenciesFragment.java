@@ -30,7 +30,7 @@ import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -42,13 +42,17 @@ public class AllCurrenciesFragment extends Fragment {
     //second part
     Spinner spinnerSourceCurrency;
     Spinner spinnerTargetCurrency;
-    ArrayAdapter<String> spinnerCurrenciesListAdapter;
+    ArrayAdapter<String> spinnerSourceCurrenciesListAdapter;
+    ArrayAdapter<String> spinnerTargetCurrenciesListAdapter;
     EditText etSourceCurrencyValue;
     EditText etTargetCurrencyValue;
     Button btnClear;
     Button btnConvert;
 
     TextView textViewRate;
+    TextView textViewRateDebugInfo;
+
+    String lastSourceCurrencyInRequest;
 
     DecimalFormat df;
 
@@ -88,6 +92,7 @@ public class AllCurrenciesFragment extends Fragment {
         btnConvert = view.findViewById(R.id.fragmentListSelectButtonConvert);
 
         textViewRate = view.findViewById(R.id.fragmentListSelectTextViewRate);
+        textViewRateDebugInfo = view.findViewById(R.id.fragmentListSelectTextViewRateDebugInfo);
         newestCurrenciesRates = new TreeMap<String, Double>();
 
         //viewmodel
@@ -125,6 +130,7 @@ public class AllCurrenciesFragment extends Fragment {
                 if (etSourceCurrencyValue.getText().toString().trim().length() > 0) {
                     double sourceAmount = Double.parseDouble(etSourceCurrencyValue.getText().toString());
                     conversionResult = viewModel.convertCurrency(currencySource, sourceAmount, currencyTarget);
+                    lastSourceCurrencyInRequest = currencySource; //todo: refactor
                     conversionResult.observe(mainLifecycleOwner, new Observer<ConversionResult>() {
                         @Override
                         public void onChanged(ConversionResult conversionResult) {
@@ -139,18 +145,18 @@ public class AllCurrenciesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 saveSpinnerValue();
-                Log.e("artur", "onItemSelectedListener");
-                viewModel.getCurrencyRate(
-                        spinnerSourceCurrency.getSelectedItem().toString(),
-                        spinnerTargetCurrency.getSelectedItem().toString()
-                )
+                String stringSource = spinnerSourceCurrency.getSelectedItem().toString();
+                String stringTarget = spinnerTargetCurrency.getSelectedItem().toString();
+                Log.e("myApp", "spinner req, src=" +stringSource+", target="+stringTarget);
+                lastSourceCurrencyInRequest = stringSource; //todo: refactor
+                viewModel.getCurrencyRate(stringSource,
+                        stringTarget)
                         .observe(mainLifecycleOwner, new Observer<CurrenciesRateFetchingResult>() {
                             @Override
                             public void onChanged(CurrenciesRateFetchingResult currenciesRateFetchingResult) {
 
-                                double currencyConversionRate = currenciesRateFetchingResult.rate;
-                                if (currencyConversionRate != Double.MIN_VALUE) //todo: refactor
-                                    fillRateValue(currencyConversionRate);
+                                if (currenciesRateFetchingResult.rate != Double.MIN_VALUE) //todo: refactor
+                                    fillRateValue(currenciesRateFetchingResult);
                             }
                         });
             }
@@ -165,12 +171,16 @@ public class AllCurrenciesFragment extends Fragment {
         return view;
     }
 
-    void fillRateValue(Double currencyConversionRate) {
-        assert (spinnerSourceCurrency.getSelectedItem().toString().length() > 0 &&
-                spinnerTargetCurrency.getSelectedItem().toString().length() > 0);
-
-        String conversionResultText = Double.toString(currencyConversionRate);
+    void fillRateValue(CurrenciesRateFetchingResult currencyConversionRate) {
+        String conversionResultText = Double.toString(currencyConversionRate.rate);
         textViewRate.setText(conversionResultText);
+        StringBuilder stringBuilder = new StringBuilder()
+                .append("source=")
+                .append(currencyConversionRate.sourceCurrency)
+                .append(",target=")
+                .append(currencyConversionRate.targetCurrency);
+
+        textViewRateDebugInfo.setText(stringBuilder.toString());
     }
 
     void fillSpinners() {
@@ -179,13 +189,19 @@ public class AllCurrenciesFragment extends Fragment {
             return;
         }
 
-        if (spinnerCurrenciesListAdapter == null) {
-            spinnerCurrenciesListAdapter = new ArrayAdapter<>
+        if (spinnerSourceCurrenciesListAdapter == null || spinnerTargetCurrenciesListAdapter == null) {
+            spinnerSourceCurrenciesListAdapter = new ArrayAdapter<>
                     (getActivity()
                             .getApplicationContext(),
                             android.R.layout.simple_spinner_dropdown_item, currenciesList);
-            spinnerSourceCurrency.setAdapter(spinnerCurrenciesListAdapter);
-            spinnerTargetCurrency.setAdapter(spinnerCurrenciesListAdapter);
+
+            spinnerTargetCurrenciesListAdapter = new ArrayAdapter<>
+                    (getActivity()
+                            .getApplicationContext(),
+                            android.R.layout.simple_spinner_dropdown_item, currenciesList);
+
+            spinnerSourceCurrency.setAdapter(spinnerSourceCurrenciesListAdapter);
+            spinnerTargetCurrency.setAdapter(spinnerTargetCurrenciesListAdapter);
 
             SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences(settingsFileName, Context.MODE_PRIVATE);
             String currencySource = settings.getString("currencySource", "AUD");
@@ -193,10 +209,20 @@ public class AllCurrenciesFragment extends Fragment {
             selectSpinnerItemByValue(spinnerSourceCurrency, currencySource);
             selectSpinnerItemByValue(spinnerTargetCurrency, currencyTarget);
         } else {
-            Log.e("artur", "czyszczenie waluty");
-            spinnerCurrenciesListAdapter.clear();
-            spinnerCurrenciesListAdapter.addAll(currenciesList);
-            spinnerCurrenciesListAdapter.notifyDataSetChanged();
+            spinnerSourceCurrenciesListAdapter.clear();
+            spinnerSourceCurrenciesListAdapter.addAll(currenciesList);
+            spinnerSourceCurrenciesListAdapter.notifyDataSetChanged();
+
+            spinnerTargetCurrenciesListAdapter.clear();
+            spinnerTargetCurrenciesListAdapter.add(lastSourceCurrencyInRequest);
+            spinnerTargetCurrenciesListAdapter.addAll(currenciesList);
+            spinnerTargetCurrenciesListAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareToIgnoreCase(o2);
+                }
+            });
+            spinnerTargetCurrenciesListAdapter.notifyDataSetChanged();
         }
     }
 
