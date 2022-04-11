@@ -92,7 +92,6 @@ public class ExchangeRatesViewModel extends ViewModel {
 
     public LiveData<List<ConversionResult>> convertMultipleCurrencies(String sourceCurrency, Double sourceAmount, List<String> targetCurrencies) {
         this.requestRatesData(sourceCurrency);
-        Log.e("artur", "req4");
         this.pendingConversionMultipleCurrencies = true; //flag
 
         for (String targetCurrency : targetCurrencies) {
@@ -142,18 +141,35 @@ public class ExchangeRatesViewModel extends ViewModel {
                     resultToFillRates.rate = currencyRate.get(resultToFillRates.targetCurrency);
 
                     //fill currency conversion result data structure
-                    if (!pendingConversionMultipleCurrencies) {
-                        ConversionResult resultToFillConversion = currenciesConversionResult.getValue();
-                        resultToFillConversion.rate = currencyRate.get(resultToFillConversion.targetCurrency);
-                        resultToFillConversion.resultAmount = resultToFillConversion.sourceAmount * resultToFillConversion.rate;
-                        currenciesConversionResult.setValue(resultToFillConversion);
-                    } else {
-                        List<ConversionResult> listResultToFillConversion = multipleCurrenciesConversionResult.getValue();
-                        for (ConversionResult result : listResultToFillConversion) {
-                            result.rate = currencyRate.get(result.sourceCurrency);
-                            result.resultAmount = result.sourceAmount * result.rate;
-                            multipleCurrenciesConversionResult.setValue(listResultToFillConversion);
+                    ConversionResult resultToFillConversion = currenciesConversionResult.getValue();
+                    resultToFillConversion.rate = currencyRate.get(resultToFillConversion.targetCurrency);
+
+                    if (resultToFillConversion.rate != null) {
+                        Log.e("myApp",
+                                "currency conversion rate is OK! [source="
+                                        + resultToFillConversion.sourceCurrency
+                                        + ",target="
+                                        + resultToFillConversion.targetCurrency
+                                        + "]");
+
+                        if (!pendingConversionMultipleCurrencies) {
+                            resultToFillConversion.resultAmount = resultToFillConversion.sourceAmount * resultToFillConversion.rate;
+                            currenciesConversionResult.setValue(resultToFillConversion);
+                        } else {
+                            List<ConversionResult> listResultToFillConversion = multipleCurrenciesConversionResult.getValue();
+                            for (ConversionResult result : listResultToFillConversion) {
+                                result.rate = currencyRate.get(result.sourceCurrency);
+                                result.resultAmount = result.sourceAmount * result.rate;
+                                multipleCurrenciesConversionResult.setValue(listResultToFillConversion);
+                            }
                         }
+                    } else {
+                        Log.e("myApp",
+                                "currency conversion rate is null! [source="
+                                        + resultToFillConversion.sourceCurrency
+                                        + ",target="
+                                        + resultToFillConversion.targetCurrency
+                                        + "]");
                     }
                     resultOfCurrenciesRatesFetching.setValue(resultToFillRates);
                 }
@@ -168,6 +184,7 @@ public class ExchangeRatesViewModel extends ViewModel {
     }
 
     private void requestRatesData(String baseCurrency) {
+        Log.e("myApp", "req, base=" + baseCurrency);
         repository.requestRatesData(baseCurrency);
     }
 }

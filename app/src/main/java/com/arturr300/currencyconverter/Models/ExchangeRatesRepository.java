@@ -21,7 +21,7 @@ public class ExchangeRatesRepository {
     }
     public void requestRatesData(String baseCurrency)
     {
-        webService.requestRatesData();
+        webService.requestRatesData(baseCurrency);
     }
     public MutableLiveData<TreeMap<String, Double>> getCurrenciesRates() {
         return webService.getCurrenciesRates();
