@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.arturr300.currencyconverter.R;
 import com.arturr300.currencyconverter.ViewModels.ConversionResult;
+import com.arturr300.currencyconverter.ViewModels.CurrenciesRateFetchingResult;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
 import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 
@@ -113,6 +115,15 @@ public class MostUsedCurrenciesFragment extends Fragment {
         viewModel.convertMultipleCurrencies(baseCurrency, sourceAmount, targetCurrencies).observe(mainLifecycleOwner, new Observer<List<ConversionResult>>() {
             @Override
             public void onChanged(List<ConversionResult> conversionResults) {
+                Log.e("myApp", "convertMultipleCurrencies observer");
+                //check validity of results
+                for (ConversionResult conversionResult : conversionResults) {
+                    if (conversionResult.rate == ConversionResult.ERROR_VALUE) {
+                        Log.e("myApp", "convertMultipleCurrencies observer, at least one currency rate contains ERROR_VALUE");
+                        return;
+                    }
+                }
+
                 fillFields(conversionResults);
             }
         });
@@ -121,24 +132,61 @@ public class MostUsedCurrenciesFragment extends Fragment {
     }
 
     private void fillFields(List<ConversionResult> conversionResultsList) {
-        if (baseCurrency == "USD") { //todo: remove code repetitions
-            double PLN = conversionResultsList.get(conversionResultsList.indexOf("PLN")).resultAmount;
-            double EUR = conversionResultsList.get(conversionResultsList.indexOf("EUR")).resultAmount;
-            etPLN.setText(Double.toString(PLN));
-            etEUR.setText(Double.toString(EUR));
-        } else if (baseCurrency == "EUR") {
-            double PLN = conversionResultsList.get(conversionResultsList.indexOf("PLN")).resultAmount;
-            double USD = conversionResultsList.get(conversionResultsList.indexOf("USD")).resultAmount;
-            etUSD.setText(Double.toString(USD));
-            etPLN.setText(Double.toString(PLN));
-        } else if (baseCurrency == "PLN") {
-            double EUR = conversionResultsList.get(conversionResultsList.indexOf("EUR")).resultAmount;
-            double USD = conversionResultsList.get(conversionResultsList.indexOf("USD")).resultAmount;
-            etUSD.setText(Double.toString(USD));
-            etEUR.setText(Double.toString(EUR));
-        } else {
-            Toast.makeText(getActivity().getApplicationContext(), "Enter value", Toast.LENGTH_SHORT).show();
+        Log.e("myApp", "== fillFields method ==");
+        Log.e("myApp", "base currency=" + baseCurrency);
+        class TargetCurrency {
+            public String name;
+            public double rate;
+            public EditText layoutView;
+
+            public TargetCurrency(String name, double rate, EditText layoutView) {
+                this.name = name;
+                this.rate = rate;
+                this.layoutView = layoutView;
+            }
+
+            public String getDump() {
+                StringBuilder sb = new StringBuilder();
+                sb.append("name=");
+                sb.append(name);
+                sb.append(", rate=");
+                sb.append(rate);
+                sb.append(", layoutViewID=");
+                sb.append(layoutView.getId());
+
+                return sb.toString();
+            }
         }
+
+        double ERROR_VALUE = CurrenciesRateFetchingResult.ERROR_VALUE;
+
+        List<TargetCurrency> listOfTargetCurrencies = Arrays.asList(
+                new TargetCurrency("USD", ERROR_VALUE, etUSD),
+                new TargetCurrency("EUR", ERROR_VALUE, etEUR),
+                new TargetCurrency("PLN", ERROR_VALUE, etPLN));
+
+        //main part
+        for (TargetCurrency targetCurrency : listOfTargetCurrencies) {
+            if (targetCurrency.name != baseCurrency) {
+                Log.e("myApp", targetCurrency.getDump());
+
+                int index=-1;
+                for (ConversionResult conversionResult : conversionResultsList) {
+                    if (conversionResult.targetCurrency == targetCurrency.name) {
+                        index = conversionResultsList.indexOf(conversionResult);
+                        continue;
+                    }
+                }
+
+                if (index < 0) {
+                    Log.e("myApp", "target currency not found in currencies rates list!");
+                    return;
+                }
+                targetCurrency.rate = conversionResultsList.get(index).resultAmount;
+                targetCurrency.layoutView.setText(Double.toString(targetCurrency.rate));
+            }
+        }
+        Log.e("myApp", "== end of fillFields method ==");
     }
 
     public void setMainLifecycleOwner(AppCompatActivity mainLifecycleOwner) {
