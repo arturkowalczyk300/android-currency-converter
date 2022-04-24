@@ -1,6 +1,8 @@
 package com.arturr300.currencyconverter.Models;
 
 import androidx.lifecycle.MutableLiveData;
+
+import com.arturr300.currencyconverter.Models.WebService.ExchangeRateFromApiEntity;
 import com.arturr300.currencyconverter.Models.WebService.ExchangeRatesWebService;
 import java.util.TreeMap;
 
@@ -23,7 +25,7 @@ public class ExchangeRatesRepository {
     {
         webService.requestRatesData(baseCurrency);
     }
-    public MutableLiveData<TreeMap<String, Double>> getCurrenciesRates() {
+    public MutableLiveData<ExchangeRateFromApiEntity> getCurrenciesRates() {
         return webService.getCurrenciesRates();
     }
 

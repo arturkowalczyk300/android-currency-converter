@@ -15,7 +15,7 @@ public class ExchangeRatesWebService {
     public static String DEFAULT_BASE_CURRENCY = "USD";
 
     //non-static variables
-    private MutableLiveData<TreeMap<String, Double>> currenciesRates;
+    private MutableLiveData<ExchangeRateFromApiEntity> currenciesRates;
     private MutableLiveData<Boolean> apiWorking;
 
     private MutableLiveData<Boolean> mutableLiveDataInfoResponseSuccess;
@@ -32,9 +32,10 @@ public class ExchangeRatesWebService {
         mutableLiveDataErrorResponseBodyNull = new MutableLiveData<>();
         mutableLiveDataErrorCallEnqueueFailure = new MutableLiveData<>();
 
-        currenciesRates.setValue(new TreeMap<>());
+        //currenciesRates.setValue(new ExchangeRateFromApiEntity());
         apiHandle = ExchangeRatesRetrofitClient.getExchangeRatesApiInstance();
     }
+
     //methods
 
     public MutableLiveData<Boolean> getApiWorking() {
@@ -49,6 +50,8 @@ public class ExchangeRatesWebService {
         @Override
         public void onResponse(Call<ExchangeRateFromApiEntity> call,
                                Response<ExchangeRateFromApiEntity> response) {
+            Log.e("myApp", "webService onResponse");
+
             if (response.body() == null) {
                 sendErrorResponseBodyNull();
             }
@@ -56,16 +59,13 @@ public class ExchangeRatesWebService {
             if (response.isSuccessful()) {
                 sendInfoResponseSuccess();
                 apiWorking.setValue(true);
-
-                TreeMap<String, Double> currenciesRatesTreeMap = currenciesRates.getValue();
-                currenciesRatesTreeMap.clear();
-                currenciesRatesTreeMap.putAll(response.body().getRates());
-                currenciesRates.setValue(currenciesRatesTreeMap);
+                currenciesRates.setValue(response.body());
             }
         }
 
         @Override
         public void onFailure(Call<ExchangeRateFromApiEntity> call, Throwable t) {
+            Log.e("myApp", "webService onFailure");
             sendErrorCallEnqueueFailure();
         }
     };
@@ -73,12 +73,12 @@ public class ExchangeRatesWebService {
     public void requestApiReading(String baseCurrency) {
         Call<ExchangeRateFromApiEntity> apiReading;
         apiReading = apiHandle.getReading(baseCurrency);
-        Log.e("myApp", "base currency=" + baseCurrency);
+        Log.e("myApp", "webservice req base currency=" + baseCurrency);
 
         apiReading.enqueue(responseCallback);
     }
 
-    public MutableLiveData<TreeMap<String, Double>> getCurrenciesRates() {
+    public MutableLiveData<ExchangeRateFromApiEntity> getCurrenciesRates() {
         return currenciesRates;
     }
 

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.arturr300.currencyconverter.Models.ExchangeRatesRepository;
+import com.arturr300.currencyconverter.Models.WebService.ExchangeRateFromApiEntity;
 import com.arturr300.currencyconverter.R;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ExchangeRatesViewModel extends ViewModel {
     private MutableLiveData<Boolean> mutableLiveDataErrorCurrencyRatesTreeMapEmpty;
 
     //  data to be returned
-    private MutableLiveData<TreeMap<String, Double>> newestCurrenciesRates;
+    private MutableLiveData<ExchangeRateFromApiEntity> newestCurrenciesRates;
     private MutableLiveData<CurrenciesRateFetchingResult> resultOfCurrenciesRatesFetching;
     private MutableLiveData<ConversionResult> currenciesConversionResult;
     private MutableLiveData<List<ConversionResult>> multipleCurrenciesConversionResult;
@@ -50,6 +51,7 @@ public class ExchangeRatesViewModel extends ViewModel {
                         ConversionResult.ERROR_VALUE));
         multipleCurrenciesConversionResult = new MutableLiveData<>();
         multipleCurrenciesConversionResult.setValue(new ArrayList<ConversionResult>());
+        Log.e("myApp", "multipleCurrenciesConversionResult, set init value");
         currenciesList = new MutableLiveData<>();
         mutableLiveDataErrorCurrencyRatesTreeMapEmpty = new MutableLiveData<>();
 
@@ -67,6 +69,7 @@ public class ExchangeRatesViewModel extends ViewModel {
 
     public LiveData<CurrenciesRateFetchingResult> getCurrencyRate(String sourceCurrency, String targetCurrency) {
         this.requestRatesData(sourceCurrency);
+        Log.e("myApp", "viewModel getCurrencyRate, source=" + sourceCurrency + ", target=" + targetCurrency);
         resultOfCurrenciesRatesFetching.setValue(new CurrenciesRateFetchingResult(
                 sourceCurrency,
                 targetCurrency,
@@ -79,6 +82,7 @@ public class ExchangeRatesViewModel extends ViewModel {
     }
 
     public LiveData<ConversionResult> convertCurrency(String sourceCurrency, Double sourceAmount, String targetCurrency) {
+        Log.e("myApp", "viewModel convertCurrency, src=" + sourceCurrency + ", target=" + targetCurrency);
         this.requestRatesData(sourceCurrency);
         currenciesConversionResult.
                 setValue(
@@ -91,10 +95,15 @@ public class ExchangeRatesViewModel extends ViewModel {
     }
 
     public LiveData<List<ConversionResult>> convertMultipleCurrencies(String sourceCurrency, Double sourceAmount, List<String> targetCurrencies) {
+        Log.e("myApp", "viewModel convertMultipleCurrencies, src=" + sourceCurrency + ", target=" + targetCurrencies.toString());
         this.requestRatesData(sourceCurrency);
         this.pendingConversionMultipleCurrencies = true; //flag
 
+        multipleCurrenciesConversionResult.
+                getValue().clear();
+
         for (String targetCurrency : targetCurrencies) {
+            Log.e("myApp", "multipleCurrenciesConversionResult, set init value on object, observer should handle this situation");
             multipleCurrenciesConversionResult.
                     getValue().
                     add(new ConversionResult(sourceCurrency,
@@ -102,8 +111,6 @@ public class ExchangeRatesViewModel extends ViewModel {
                             sourceAmount,
                             ConversionResult.ERROR_VALUE,
                             ConversionResult.ERROR_VALUE));
-
-
         }
         return multipleCurrenciesConversionResult;
 
@@ -124,62 +131,91 @@ public class ExchangeRatesViewModel extends ViewModel {
     public MutableLiveData<Boolean> getMutableLiveDataErrorCurrencyRatesTreeMapEmpty() {
         return this.mutableLiveDataErrorCurrencyRatesTreeMapEmpty;
     }
-    //  private
 
-    private Observer<TreeMap<String, Double>> currenciesRatesChangedObserver = new Observer<TreeMap<String, Double>>() {
+    //  private
+    private void FillCurrencyRateResultDataStructure(CurrenciesRateFetchingResult resultToFillRates, TreeMap<String, Double> currencyRate) {
+        if (resultToFillRates.sourceCurrency == resultToFillRates.targetCurrency) {
+            Log.e("myApp", "source currency is the same as target!");
+            return;
+        }
+
+        if (resultToFillRates != null)
+            resultToFillRates.rate = currencyRate.get(resultToFillRates.targetCurrency);
+        else {
+            mutableLiveDataErrorCurrencyRatesTreeMapEmpty.setValue(Boolean.TRUE);
+        }
+
+        if (resultToFillRates.rate == null)
+            Log.e("myApp", "here it saves null!!!!");
+        resultOfCurrenciesRatesFetching.setValue(resultToFillRates);
+    }
+
+    private Observer<ExchangeRateFromApiEntity> currenciesRatesChangedObserver = new Observer<ExchangeRateFromApiEntity>() {
         @Override
-        public void onChanged(TreeMap<String, Double> currencyRate) {
-            if (currencyRate.size() > 0) {
+        public void onChanged(ExchangeRateFromApiEntity currencyRate) {
+            Log.e("myApp", currencyRate.toString());
+
+            Log.e("myApp", "currencies rates changed!");
+
+            if (currencyRate.getRates() == null) {
+                Log.e("myApp", "getRates() returns null!");
+                return;
+            }
+
+            if (currencyRate.getRates().size() > 0) {
                 responseReceived = true;
 
                 //fill currencies list
-                currenciesList.setValue(new ArrayList<String>(currencyRate.keySet()));
+                currenciesList.setValue(new ArrayList<String>(currencyRate.getRates().keySet()));
+                FillCurrencyRateResultDataStructure(
+                        resultOfCurrenciesRatesFetching.getValue(),
+                        currencyRate.getRates());
 
-                //fill fetching currency rate result data structure
-                CurrenciesRateFetchingResult resultToFillRates = resultOfCurrenciesRatesFetching.getValue();
-                if (resultToFillRates != null) {
-                    resultToFillRates.rate = currencyRate.get(resultToFillRates.targetCurrency);
 
-                    //fill currency conversion result data structure
-                    ConversionResult resultToFillConversion = currenciesConversionResult.getValue();
-                    resultToFillConversion.rate = currencyRate.get(resultToFillConversion.targetCurrency);
+                    if (pendingConversionMultipleCurrencies) {
+                        List<ConversionResult> listResultToFillConversion = multipleCurrenciesConversionResult.getValue();
+                        for (ConversionResult result : listResultToFillConversion) {
+                            result.rate = currencyRate.getRates().get(result.targetCurrency);
+                            if (result.rate == null) {
+                                Log.e("myApp", "result.rate is null!");
+                                return;
+                            }
+                            result.resultAmount = result.sourceAmount * result.rate;
+                            multipleCurrenciesConversionResult.setValue(listResultToFillConversion);
+                            Log.e("myApp", "multipleCurrenciesConversionResult, set value with currencies rates");
+                        }
+                    } else { //convert only one currency
 
-                    if (resultToFillConversion.rate != null) {
-                        Log.e("myApp",
-                                "currency conversion rate is OK! [source="
-                                        + resultToFillConversion.sourceCurrency
-                                        + ",target="
-                                        + resultToFillConversion.targetCurrency
-                                        + "]");
+                        //fill currency conversion result data structure
+                        ConversionResult resultToFillConversion = currenciesConversionResult.getValue();
+                        resultToFillConversion.rate = currencyRate.getRates().get(resultToFillConversion.targetCurrency);
 
-                        if (!pendingConversionMultipleCurrencies) {
+                        if (resultToFillConversion.rate != null) {
+                            Log.e("myApp",
+                                    "currency conversion rate is OK! [source="
+                                            + resultToFillConversion.sourceCurrency
+                                            + ",target="
+                                            + resultToFillConversion.targetCurrency
+                                            + "]");
+
                             resultToFillConversion.resultAmount = resultToFillConversion.sourceAmount * resultToFillConversion.rate;
                             currenciesConversionResult.setValue(resultToFillConversion);
-                        } else {
-                            List<ConversionResult> listResultToFillConversion = multipleCurrenciesConversionResult.getValue();
-                            for (ConversionResult result : listResultToFillConversion) {
-                                result.rate = currencyRate.get(result.sourceCurrency);
-                                result.resultAmount = result.sourceAmount * result.rate;
-                                multipleCurrenciesConversionResult.setValue(listResultToFillConversion);
-                            }
                         }
-                    } else {
-                        Log.e("myApp",
-                                "currency conversion rate is null! [source="
-                                        + resultToFillConversion.sourceCurrency
-                                        + ",target="
-                                        + resultToFillConversion.targetCurrency
-                                        + "]");
+                        else {
+                            Log.e("myApp",
+                                    "currency conversion rate is null! [source="
+                                            + resultToFillConversion.sourceCurrency
+                                            + ",target="
+                                            + resultToFillConversion.targetCurrency
+                                            + "]");
+                        }
                     }
-                    resultOfCurrenciesRatesFetching.setValue(resultToFillRates);
                 }
-            } else {
-                mutableLiveDataErrorCurrencyRatesTreeMapEmpty.setValue(Boolean.TRUE);
-            }
-        }
-    };
 
-    private MutableLiveData<TreeMap<String, Double>> getCurrenciesRates() {
+            }
+        };
+
+    private MutableLiveData<ExchangeRateFromApiEntity> getCurrenciesRates() {
         return repository.getCurrenciesRates();
     }
 
