@@ -50,7 +50,6 @@ public class ExchangeRatesWebService {
         @Override
         public void onResponse(Call<ExchangeRateFromApiEntity> call,
                                Response<ExchangeRateFromApiEntity> response) {
-            Log.e("myApp", "webService onResponse");
 
             if (response.body() == null) {
                 sendErrorResponseBodyNull();
@@ -65,7 +64,6 @@ public class ExchangeRatesWebService {
 
         @Override
         public void onFailure(Call<ExchangeRateFromApiEntity> call, Throwable t) {
-            Log.e("myApp", "webService onFailure");
             sendErrorCallEnqueueFailure();
         }
     };
@@ -73,7 +71,6 @@ public class ExchangeRatesWebService {
     public void requestApiReading(String baseCurrency) {
         Call<ExchangeRateFromApiEntity> apiReading;
         apiReading = apiHandle.getReading(baseCurrency);
-        Log.e("myApp", "webservice req base currency=" + baseCurrency);
 
         apiReading.enqueue(responseCallback);
     }

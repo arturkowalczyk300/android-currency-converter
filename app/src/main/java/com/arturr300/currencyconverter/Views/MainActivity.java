@@ -16,7 +16,10 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //      other variables
     String appBuildDate;
     DecimalFormat df;
+    Handler handlerApiResponseTimeout;
 
     //handle data request and response
 
@@ -110,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_most_used);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_list_select);
 
+        //timeout handler
+        handlerApiResponseTimeout = new Handler(Looper.getMainLooper());
+
         //thread responsibility fuses override
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -131,10 +138,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onChanged(Boolean aBoolean) {
                 isApiWorking = aBoolean.booleanValue();
-                checkNetworkState();
+                handleNetworkState();
             }
         });
-        checkNetworkState();
+        handleNetworkState();
         viewModel.getMutableLiveDataInfoResponseSuccess().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -160,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         viewModel.getMutableLiveDataErrorCurrencyRatesTreeMapEmpty().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if(aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
+                if (aBoolean.booleanValue() && preferencesRepository.isSettingDisplayDebugToasts())
                     DynamicToast.makeError(appContext, getString(R.string.toastErrorCurrencyRatesTreeMapEmpty)).show();
             }
         });
@@ -179,11 +186,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void checkNetworkState() {
+    public void handleNetworkState() {
         if (isApiWorking)
             hideNetworkErrorScreen();
-        else
-            showNetworkErrorScreen();
+        else {
+            //start looking for internet change state
+            handlerApiResponseTimeout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isApiWorking == false)
+                        showNetworkErrorScreen();
+                }
+            }, 1000);
+        }
     }
 
     public void showNetworkErrorScreen() {
