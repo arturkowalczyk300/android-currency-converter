@@ -48,6 +48,7 @@ public class AllCurrenciesFragment extends Fragment {
     EditText etTargetCurrencyValue;
     Button btnClear;
     Button btnConvert;
+    Button btnReverse;
 
     TextView textViewRate;
     TextView textViewRateDebugInfo;
@@ -90,6 +91,7 @@ public class AllCurrenciesFragment extends Fragment {
         etTargetCurrencyValue = view.findViewById(R.id.fragmentListSelectEditTextTargetCurrencyValue);
         btnClear = view.findViewById(R.id.fragmentListSelectButtonClear);
         btnConvert = view.findViewById(R.id.fragmentListSelectButtonConvert);
+        btnReverse = view.findViewById(R.id.fragmentListSelectButtonReverse);
 
         textViewRate = view.findViewById(R.id.fragmentListSelectTextViewRate);
         textViewRateDebugInfo = view.findViewById(R.id.fragmentListSelectTextViewRateDebugInfo);
@@ -114,6 +116,7 @@ public class AllCurrenciesFragment extends Fragment {
             }
         });
 
+        //add button listeners
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,6 +144,21 @@ public class AllCurrenciesFragment extends Fragment {
             }
         });
 
+        btnReverse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String selectedBase = spinnerSourceCurrency.getSelectedItem().toString();
+                String selectedTarget = spinnerTargetCurrency.getSelectedItem().toString();
+
+                try {
+                    spinnerSourceCurrency.setSelection(spinnerSourceCurrenciesListAdapter.getPosition(selectedTarget));
+                    spinnerTargetCurrency.setSelection(spinnerTargetCurrenciesListAdapter.getPosition(selectedBase));
+                } catch (Exception ex) {
+                    Log.e("myApp", ex.toString());
+                }
+            }
+        });
+
         AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -153,7 +171,7 @@ public class AllCurrenciesFragment extends Fragment {
                         .observe(mainLifecycleOwner, new Observer<CurrenciesRateFetchingResult>() {
                             @Override
                             public void onChanged(CurrenciesRateFetchingResult currenciesRateFetchingResult) {
-                                if(currenciesRateFetchingResult.rate == null){
+                                if (currenciesRateFetchingResult.rate == null) {
                                     Log.e("myApp", "currenciesRateFetchingResult.rate is null!");
                                     return;
                                 }
