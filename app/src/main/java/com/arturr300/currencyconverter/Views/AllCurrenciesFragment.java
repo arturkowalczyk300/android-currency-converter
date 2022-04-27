@@ -153,6 +153,10 @@ public class AllCurrenciesFragment extends Fragment {
                         .observe(mainLifecycleOwner, new Observer<CurrenciesRateFetchingResult>() {
                             @Override
                             public void onChanged(CurrenciesRateFetchingResult currenciesRateFetchingResult) {
+                                if(currenciesRateFetchingResult.rate == null){
+                                    Log.e("myApp", "currenciesRateFetchingResult.rate is null!");
+                                    return;
+                                }
 
                                 if (currenciesRateFetchingResult.rate != Double.MIN_VALUE) //todo: refactor
                                     fillRateValue(currenciesRateFetchingResult);
