@@ -147,7 +147,6 @@ public class AllCurrenciesFragment extends Fragment {
                 saveSpinnerValue();
                 String stringSource = spinnerSourceCurrency.getSelectedItem().toString();
                 String stringTarget = spinnerTargetCurrency.getSelectedItem().toString();
-                Log.e("myApp", "spinner req, src=" +stringSource+", target="+stringTarget);
                 lastSourceCurrencyInRequest = stringSource; //todo: refactor
                 viewModel.getCurrencyRate(stringSource,
                         stringTarget)

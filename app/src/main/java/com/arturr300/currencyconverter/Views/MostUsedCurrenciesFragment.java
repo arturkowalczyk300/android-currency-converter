@@ -115,11 +115,9 @@ public class MostUsedCurrenciesFragment extends Fragment {
         viewModel.convertMultipleCurrencies(baseCurrency, sourceAmount, targetCurrencies).observe(mainLifecycleOwner, new Observer<List<ConversionResult>>() {
             @Override
             public void onChanged(List<ConversionResult> conversionResults) {
-                Log.e("myApp", "convertMultipleCurrencies observer");
                 //check validity of results
                 for (ConversionResult conversionResult : conversionResults) {
                     if (conversionResult.rate == ConversionResult.ERROR_VALUE) {
-                        Log.e("myApp", "convertMultipleCurrencies observer, at least one currency rate contains ERROR_VALUE");
                         return;
                     }
                 }
@@ -132,8 +130,6 @@ public class MostUsedCurrenciesFragment extends Fragment {
     }
 
     private void fillFields(List<ConversionResult> conversionResultsList) {
-        Log.e("myApp", "== fillFields method ==");
-        Log.e("myApp", "base currency=" + baseCurrency);
         class TargetCurrency {
             public String name;
             public double rate;
@@ -168,7 +164,6 @@ public class MostUsedCurrenciesFragment extends Fragment {
         //main part
         for (TargetCurrency targetCurrency : listOfTargetCurrencies) {
             if (targetCurrency.name != baseCurrency) {
-                Log.e("myApp", targetCurrency.getDump());
 
                 int index=-1;
                 for (ConversionResult conversionResult : conversionResultsList) {
@@ -179,14 +174,12 @@ public class MostUsedCurrenciesFragment extends Fragment {
                 }
 
                 if (index < 0) {
-                    Log.e("myApp", "target currency not found in currencies rates list!");
                     return;
                 }
                 targetCurrency.rate = conversionResultsList.get(index).resultAmount;
                 targetCurrency.layoutView.setText(Double.toString(targetCurrency.rate));
             }
         }
-        Log.e("myApp", "== end of fillFields method ==");
     }
 
     public void setMainLifecycleOwner(AppCompatActivity mainLifecycleOwner) {
