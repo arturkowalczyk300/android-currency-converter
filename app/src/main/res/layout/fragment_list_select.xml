@@ -4,8 +4,84 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ListSelect">
+    tools:context=".Views.AllCurrenciesFragment">
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_currency1"
+            android:textColor="?attr/myTextColor" />
+
+        <Spinner
+            android:id="@+id/fragmentListSelectSpinnerSourceCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/myTextColor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_currency2" />
+
+        <Spinner
+            android:id="@+id/fragmentListSelectSpinnerTargetCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/myTextColor" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_currency1"
+            android:textColor="?attr/myTextColor" />
+
+        <EditText
+            android:id="@+id/fragmentListSelectEditTextSourceCurrencyValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:digits="0123456789."
+            android:ems="5"
+            android:inputType="number" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_currency2"
+            android:textColor="?attr/myTextColor" />
+
+        <EditText
+            android:id="@+id/fragmentListSelectEditTextTargetCurrencyValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:digits="0123456789."
+            android:ems="5"
+            android:inputType="number" />
+        <Button
+            android:id="@+id/fragmentListSelectButtonReverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reverse"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,114 +95,7 @@
             android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_currency1"
-                android:textColor="?attr/myTextColor" />
 
-            <Spinner
-                android:id="@+id/spinnerFirstCurrency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/myTextColor"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_currency2" />
-
-            <Spinner
-                android:id="@+id/spinnerSecondCurrency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/myTextColor"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_currency1"
-                android:textColor="?attr/myTextColor" />
-
-            <EditText
-                android:id="@+id/editTextFirstCurrencyValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:digits="0123456789."
-                android:ems="5"
-                android:inputType="number" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_currency2"
-                android:textColor="?attr/myTextColor" />
-
-            <EditText
-                android:id="@+id/editTextSecondCurrencyValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:digits="0123456789."
-                android:ems="5"
-                android:inputType="number" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:textColor="?attr/myTextColor"
-                    android:text="@string/text_rate1_to2" />
-
-                <TextView
-                    android:id="@+id/textViewRate1To2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="?attr/myTextColor"
-                    android:textSize="15dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/text_rate2_to1"
-                    android:textColor="?attr/myTextColor" />
-
-                <TextView
-                    android:id="@+id/textViewRate2To1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="?attr/myTextColor"
-                    android:textSize="15dp" />
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -136,7 +105,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/buttonClear2"
+                android:id="@+id/fragmentListSelectButtonClear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -147,7 +116,7 @@
                 android:text="@string/btn_clear" />
 
             <Button
-                android:id="@+id/buttonConvert2"
+                android:id="@+id/fragmentListSelectButtonConvert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -158,6 +127,8 @@
                 android:text="@string/btn_convert" />
 
         </LinearLayout>
+
+    </LinearLayout>
 
     </LinearLayout>
 
