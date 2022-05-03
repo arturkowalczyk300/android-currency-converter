@@ -95,28 +95,7 @@
             android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:text="@string/text_rate1_to2"
-                android:textColor="?attr/myTextColor" />
 
-            <TextView
-                android:id="@+id/fragmentListSelectTextViewRate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="?attr/myTextColor"
-                android:textSize="15dp" />
-            <TextView
-                android:id="@+id/fragmentListSelectTextViewRateDebugInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_marginLeft="20dp"
-                android:textColor="@color/blue"
-                android:textSize="15dp" />
         </LinearLayout>
 
         <LinearLayout

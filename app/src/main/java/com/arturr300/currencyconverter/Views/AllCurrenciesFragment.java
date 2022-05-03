@@ -50,9 +50,6 @@ public class AllCurrenciesFragment extends Fragment {
     Button btnConvert;
     Button btnReverse;
 
-    TextView textViewRate;
-    TextView textViewRateDebugInfo;
-
     String lastSourceCurrencyInRequest;
 
     DecimalFormat df;
@@ -93,8 +90,6 @@ public class AllCurrenciesFragment extends Fragment {
         btnConvert = view.findViewById(R.id.fragmentListSelectButtonConvert);
         btnReverse = view.findViewById(R.id.fragmentListSelectButtonReverse);
 
-        textViewRate = view.findViewById(R.id.fragmentListSelectTextViewRate);
-        textViewRateDebugInfo = view.findViewById(R.id.fragmentListSelectTextViewRateDebugInfo);
         newestCurrenciesRates = new TreeMap<String, Double>();
 
         //viewmodel
@@ -162,9 +157,18 @@ public class AllCurrenciesFragment extends Fragment {
         AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("myApp", "OnItemSelectedListener");
                 saveSpinnerValue();
                 String stringSource = spinnerSourceCurrency.getSelectedItem().toString();
                 String stringTarget = spinnerTargetCurrency.getSelectedItem().toString();
+
+                if (stringSource.equals(stringTarget)) //if selected items are the same, select next
+                {
+                    int indexOfNextItem = (spinnerTargetCurrency.getSelectedItemPosition() + 1)
+                            % spinnerTargetCurrency.getCount(); //limit index
+                    spinnerTargetCurrency.setSelection(indexOfNextItem);
+                }
+
                 lastSourceCurrencyInRequest = stringSource; //todo: refactor
                 if (mainLifecycleOwner != null) {
                     viewModel.getCurrencyRate(stringSource,
@@ -196,14 +200,12 @@ public class AllCurrenciesFragment extends Fragment {
 
     void fillRateValue(CurrenciesRateFetchingResult currencyConversionRate) {
         String conversionResultText = Double.toString(currencyConversionRate.rate);
-        textViewRate.setText(conversionResultText);
         StringBuilder stringBuilder = new StringBuilder()
                 .append("source=")
                 .append(currencyConversionRate.sourceCurrency)
                 .append(",target=")
                 .append(currencyConversionRate.targetCurrency);
 
-        textViewRateDebugInfo.setText(stringBuilder.toString());
     }
 
     void fillSpinners() {
@@ -256,6 +258,7 @@ public class AllCurrenciesFragment extends Fragment {
     }
 
     void selectSpinnerItemByValue(Spinner spin, String value) {
+        Log.e("myApp", "selectSpinnerItemByValue");
         SpinnerAdapter adapter = spin.getAdapter();
         for (int pos = 0; pos < adapter.getCount(); pos++) {
             String item = (String) adapter.getItem(pos);
