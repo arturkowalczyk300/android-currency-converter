@@ -235,7 +235,13 @@ public class AllCurrenciesFragment extends Fragment {
             spinnerSourceCurrenciesListAdapter.notifyDataSetChanged();
 
             spinnerTargetCurrenciesListAdapter.clear();
-            spinnerTargetCurrenciesListAdapter.add(lastSourceCurrencyInRequest);
+
+            if (lastSourceCurrencyInRequest != null) {
+                spinnerTargetCurrenciesListAdapter.add(lastSourceCurrencyInRequest);
+            } else {
+                Log.e("myApp", "lastSourceCurrencyInRequest is null!");
+            }
+
             spinnerTargetCurrenciesListAdapter.addAll(currenciesList);
             spinnerTargetCurrenciesListAdapter.sort(new Comparator<String>() {
                 @Override
