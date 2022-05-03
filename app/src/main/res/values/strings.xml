@@ -6,6 +6,7 @@
     <string name="list_select">Wybór walut</string>
     <string name="text_currency1">Waluta 1</string>
     <string name="text_currency2">Waluta 2</string>
+    <string name="reverse">Odwróć</string>
     <string name="btn_clear">Wyczyść</string>
     <string name="btn_convert">Konwertuj</string>
     <string name="menu_darkmode">Tryb ciemny</string>
@@ -14,10 +15,18 @@
     <string name="content_about">Autor: Artur Kowalczyk\nKontakt: arturkowalczyk300@gmail.com\nData kompilacji: %1$s </string>
     <string name="text_rate1_to2">Kurs -----&gt;:</string>
     <string name="text_rate2_to1">Kurs &lt;-----:</string>
-    <string name="network_error_title">Brak dostępu do internetu!</string>
+    <string name="network_error_title">Brak dostępu do internetu\nlub nieprawidłowa odpowiedź z usługi!</string>
     <string name="network_error_description">Możliwe rozwiązania:\n
         1. Włącz dane mobilne (mogą zostać pobrane opłaty)lub dostęp do sieci Wi-Fi\n
         2. Uruchom aplikację od nowa\n
         3. Skontaktuj się z autorem aplikacji</string>
     <string name="network_error_retry">Spróbuj ponownie</string>
+    <string name="settings_display_debug_toasts">Display debug toasts</string>
+    <string name="toastErrorApiReponseBodyNull">API response body null!</string>
+    <string name="toastSuccessApiResponse">API response success!</string>
+    <string name="toastErrorApiCallEnqueue">API response call enqueue failed!</string>
+    <string name="toastErrorCurrencyRatesTreeMapEmpty">Currency rates TreeMap is empty!</string>
+    <string name="DEFAULT_CURRENCY">USD</string>
+    <string name="DEFAULT_TARGET_CURRENCY">EUR</string>
+    <string name="DEFAULT_DATE_FORMAT">"dd.MM.yyyy HH:mm:ss 'GMT'Z"</string>
 </resources>

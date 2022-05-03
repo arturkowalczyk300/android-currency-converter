@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="?attr/myBackgroundColor"
     android:orientation="vertical"
-    tools:context=".MainActivity"
+    tools:context=".Views.MainActivity"
     tools:ignore="LabelFor">
 
     <FrameLayout
@@ -14,7 +14,7 @@
 
         <fragment
             android:id="@+id/fragmentNetworkError"
-            android:name="com.arturr300.currencyconverter.NetworkError"
+            android:name="com.arturr300.currencyconverter.Views.NetworkErrorFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
