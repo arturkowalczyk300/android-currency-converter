@@ -1,6 +1,7 @@
 ﻿![banner](res/banner.png)
 
 ![Operating system](https://img.shields.io/badge/OS-Android%208.0%2B-brightgreen)  ![Main language](https://img.shields.io/badge/Main%20language-Java-blue)
+![Release version](https://img.shields.io/github/v/tag/arturkowalczyk300/android-currency-converter?color=darkviolet&label=Release)
 # Description
 **CurrencyConverter** is application for devices with Android operating system, which uses newest currencies rates from online data source to make conversion.
 
