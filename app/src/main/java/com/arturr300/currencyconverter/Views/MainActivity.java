@@ -100,13 +100,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabLayout.setupWithViewPager(viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        viewPagerAdapter.addFragment(fragmentMostUsedFragment, getString(R.string.most_used));
         viewPagerAdapter.addFragment(listSelectFragment, getString(R.string.list_select));
+        viewPagerAdapter.addFragment(fragmentMostUsedFragment, getString(R.string.most_used));
 
         viewPager.setAdapter(viewPagerAdapter);
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_most_used);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_list_select);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_select);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_most_used);
 
         //timeout handler
         handlerApiResponseTimeout = new Handler(Looper.getMainLooper());
