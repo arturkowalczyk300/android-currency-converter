@@ -277,13 +277,15 @@ public class AllCurrenciesFragment extends Fragment {
             spinnerTargetCurrenciesListAdapter = new ArrayAdapter<>
                     (getActivity(),
                             R.layout.spinner_layout, currenciesList);
+            spinnerSourceCurrenciesListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             spinnerSourceCurrency.setAdapter(spinnerSourceCurrenciesListAdapter);
             spinnerTargetCurrency.setAdapter(spinnerTargetCurrenciesListAdapter);
 
+
             SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences(settingsFileName, Context.MODE_PRIVATE);
-            String currencySource = settings.getString("currencySource", "AUD");
-            String currencyTarget = settings.getString("currencyTarget", "AUD");
+            String currencySource = settings.getString("currencySource", "PLN");
+            String currencyTarget = settings.getString("currencyTarget", "EUR");
             selectSpinnerItemByValue(spinnerSourceCurrency, currencySource);
             selectSpinnerItemByValue(spinnerTargetCurrency, currencyTarget);
         } else {
