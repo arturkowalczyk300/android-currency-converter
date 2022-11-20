@@ -3,4 +3,5 @@
     <attr name="myTextColor" format="color"/>
     <attr name="myBackgroundColor" format="color"/>
     <attr name="myButtonBackgroundColor" format="color"/>
+    <attr name="currencyFragmentBackgroundColor" format="color"/>
     </resources>
