@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Views;
+package com.arturkowalczyk300.currencyconverter.Views;
 
 import android.os.Bundle;
 
@@ -17,11 +17,11 @@ import android.widget.EditText;
 import android.widget.TableRow;
 import android.widget.Toast;
 
-import com.arturr300.currencyconverter.R;
-import com.arturr300.currencyconverter.ViewModels.ConversionResult;
-import com.arturr300.currencyconverter.ViewModels.CurrenciesRateFetchingResult;
-import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
-import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
+import com.arturkowalczyk300.currencyconverter.R;
+import com.arturkowalczyk300.currencyconverter.ViewModels.ConversionResult;
+import com.arturkowalczyk300.currencyconverter.ViewModels.CurrenciesRateFetchingResult;
+import com.arturkowalczyk300.currencyconverter.ViewModels.ExchangeRatesViewModel;
+import com.arturkowalczyk300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

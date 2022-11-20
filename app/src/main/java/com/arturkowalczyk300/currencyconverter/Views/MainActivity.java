@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Views;
+package com.arturkowalczyk300.currencyconverter.Views;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,11 +31,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.arturr300.currencyconverter.BuildConfig;
-import com.arturr300.currencyconverter.Preferences.PreferencesRepository;
-import com.arturr300.currencyconverter.R;
-import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModel;
-import com.arturr300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
+import com.arturkowalczyk300.currencyconverter.BuildConfig;
+import com.arturkowalczyk300.currencyconverter.Preferences.PreferencesRepository;
+import com.arturkowalczyk300.currencyconverter.R;
+import com.arturkowalczyk300.currencyconverter.ViewModels.ExchangeRatesViewModel;
+import com.arturkowalczyk300.currencyconverter.ViewModels.ExchangeRatesViewModelFactory;
 import com.google.android.material.tabs.TabLayout;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 //todo(4): show API state, or at least prepare it to exception occur

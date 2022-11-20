@@ -11,7 +11,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.arturr300.currencyconverter"
+        applicationId "com.arturkowalczyk300.currencyconverter"
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1

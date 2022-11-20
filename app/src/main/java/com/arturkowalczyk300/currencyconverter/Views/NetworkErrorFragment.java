@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Views;
+package com.arturkowalczyk300.currencyconverter.Views;
 
 import android.os.Bundle;
 
@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.arturr300.currencyconverter.R;
+import com.arturkowalczyk300.currencyconverter.R;
 
 /**
  * A simple {@link Fragment} subclass.

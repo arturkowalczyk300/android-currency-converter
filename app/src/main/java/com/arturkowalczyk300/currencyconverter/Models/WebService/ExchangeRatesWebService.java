@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Models.WebService;
+package com.arturkowalczyk300.currencyconverter.Models.WebService;
 
 import android.util.Log;
 

@@ -9,7 +9,7 @@
     <fragment
 
         android:id="@+id/fragmentAllCurrenciesSourceCurrency"
-        android:name="com.arturr300.currencyconverter.Views.SourceCurrencyFragment"
+        android:name="com.arturkowalczyk300.currencyconverter.Views.SourceCurrencyFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -22,7 +22,7 @@
     <fragment
 
         android:id="@+id/fragmentAllCurrenciesTargetCurrency"
-        android:name="com.arturr300.currencyconverter.Views.TargetCurrencyFragment"
+        android:name="com.arturkowalczyk300.currencyconverter.Views.TargetCurrencyFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"

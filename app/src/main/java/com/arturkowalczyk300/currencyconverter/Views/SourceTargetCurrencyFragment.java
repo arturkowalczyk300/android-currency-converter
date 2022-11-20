@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Views;
+package com.arturkowalczyk300.currencyconverter.Views;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.arturr300.currencyconverter.R;
+import com.arturkowalczyk300.currencyconverter.R;
 
 class SourceTargetCurrencyFragment extends Fragment {
 

@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.ViewModels;
+package com.arturkowalczyk300.currencyconverter.ViewModels;
 
 import android.app.Application;
 import android.util.Log;
@@ -9,9 +9,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import com.arturr300.currencyconverter.Models.ExchangeRatesRepository;
-import com.arturr300.currencyconverter.Models.WebService.ExchangeRateFromApiEntity;
-import com.arturr300.currencyconverter.R;
+import com.arturkowalczyk300.currencyconverter.Models.ExchangeRatesRepository;
+import com.arturkowalczyk300.currencyconverter.Models.WebService.ExchangeRateFromApiEntity;
+import com.arturkowalczyk300.currencyconverter.R;
 
 import java.util.ArrayList;
 import java.util.List;

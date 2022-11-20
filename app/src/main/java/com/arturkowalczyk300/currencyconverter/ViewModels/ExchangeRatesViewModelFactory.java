@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.ViewModels;
+package com.arturkowalczyk300.currencyconverter.ViewModels;
 
 import android.app.Application;
 

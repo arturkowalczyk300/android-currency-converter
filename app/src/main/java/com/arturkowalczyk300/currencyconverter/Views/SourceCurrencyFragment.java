@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Views;
+package com.arturkowalczyk300.currencyconverter.Views;
 
 import static androidx.fragment.app.FragmentKt.setFragmentResult;
 
@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 
 public class SourceCurrencyFragment extends SourceTargetCurrencyFragment {
 
-    public static final String FRAGMENT_REQUEST_KEY = "com.arturr300.currencyconverter.FRAGMENT_REQUEST_KEY_SOURCE";
-    public static final String BUNDLE_VIEW_CREATED = "com.arturr300.currencyconverter.BUNDLE_VIEW_CREATED_SOURCE";
+    public static final String FRAGMENT_REQUEST_KEY = "com.arturkowalczyk300.currencyconverter.FRAGMENT_REQUEST_KEY_SOURCE";
+    public static final String BUNDLE_VIEW_CREATED = "com.arturkowalczyk300.currencyconverter.BUNDLE_VIEW_CREATED_SOURCE";
 
     public SourceCurrencyFragment() {
         super(INPUT_TYPE.SOURCE);

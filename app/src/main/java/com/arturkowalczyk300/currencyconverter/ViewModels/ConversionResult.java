@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.ViewModels;
+package com.arturkowalczyk300.currencyconverter.ViewModels;
 
 public class ConversionResult {
     public static final Double ERROR_VALUE = Double.MIN_VALUE;

@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Views;
+package com.arturkowalczyk300.currencyconverter.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import com.arturr300.currencyconverter.R;
+import com.arturkowalczyk300.currencyconverter.R;
 
 public class SettingsActivity extends AppCompatActivity {
     //static variables

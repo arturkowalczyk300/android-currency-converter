@@ -1,4 +1,4 @@
-package com.arturr300.currencyconverter.Preferences;
+package com.arturkowalczyk300.currencyconverter.Preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,9 +1,9 @@
-package com.arturr300.currencyconverter.Models;
+package com.arturkowalczyk300.currencyconverter.Models;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.arturr300.currencyconverter.Models.WebService.ExchangeRateFromApiEntity;
-import com.arturr300.currencyconverter.Models.WebService.ExchangeRatesWebService;
+import com.arturkowalczyk300.currencyconverter.Models.WebService.ExchangeRateFromApiEntity;
+import com.arturkowalczyk300.currencyconverter.Models.WebService.ExchangeRatesWebService;
 import java.util.TreeMap;
 
 public class ExchangeRatesRepository {

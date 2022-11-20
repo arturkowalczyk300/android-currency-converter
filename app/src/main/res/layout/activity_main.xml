@@ -14,7 +14,7 @@
 
         <fragment
             android:id="@+id/fragmentNetworkError"
-            android:name="com.arturr300.currencyconverter.Views.NetworkErrorFragment"
+            android:name="com.arturkowalczyk300.currencyconverter.Views.NetworkErrorFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/fragment_network_error" />
