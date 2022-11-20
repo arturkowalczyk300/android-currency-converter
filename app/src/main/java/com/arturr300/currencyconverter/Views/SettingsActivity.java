@@ -28,12 +28,6 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         checkBoxDisplayDebugToasts = findViewById(R.id.settings_checkbox_display_debug_toasts);
 
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            setTheme(R.style.DarkTheme);
-        } else {
-            setTheme(R.style.LightTheme);
-        }
-
         Bundle bundle = getIntent().getExtras();
         settingDisplayDebugToasts = bundle.getBoolean(MainActivity.INTENT_ID_SETTINGS_DISPLAY_DEBUG_TOASTS);
         checkBoxDisplayDebugToasts.setChecked(settingDisplayDebugToasts);
