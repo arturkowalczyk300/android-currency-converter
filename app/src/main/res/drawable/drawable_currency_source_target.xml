@@ -4,5 +4,5 @@
     <corners android:radius="20dp" />
     <stroke
         android:width="5dp"
-        android:color="@color/teal_700" />
+        android:color="?attr/currencyFragmentBackgroundColor" />
 </shape>

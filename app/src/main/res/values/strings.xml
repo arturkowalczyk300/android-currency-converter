@@ -6,7 +6,7 @@
     <string name="list_select">Wybór walut</string>
     <string name="text_currency1">Waluta 1</string>
     <string name="text_currency2">Waluta 2</string>
-    <string name="reverse">Odwróć</string>
+    <string name="btn_reverse">Odwróć</string>
     <string name="btn_clear">Wyczyść</string>
     <string name="btn_convert">Konwertuj</string>
     <string name="menu_darkmode">Tryb ciemny</string>

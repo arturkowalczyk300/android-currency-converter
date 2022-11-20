@@ -270,14 +270,13 @@ public class AllCurrenciesFragment extends Fragment {
 
         if (spinnerSourceCurrenciesListAdapter == null || spinnerTargetCurrenciesListAdapter == null) {
             spinnerSourceCurrenciesListAdapter = new ArrayAdapter<>
-                    (getActivity()
-                            .getApplicationContext(),
-                            android.R.layout.simple_spinner_dropdown_item, currenciesList);
+                    (getActivity(),
+                            R.layout.spinner_layout, currenciesList);
+            spinnerSourceCurrenciesListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             spinnerTargetCurrenciesListAdapter = new ArrayAdapter<>
-                    (getActivity()
-                            .getApplicationContext(),
-                            android.R.layout.simple_spinner_dropdown_item, currenciesList);
+                    (getActivity(),
+                            R.layout.spinner_layout, currenciesList);
 
             spinnerSourceCurrency.setAdapter(spinnerSourceCurrenciesListAdapter);
             spinnerTargetCurrency.setAdapter(spinnerTargetCurrenciesListAdapter);
@@ -309,6 +308,7 @@ public class AllCurrenciesFragment extends Fragment {
             });
             spinnerTargetCurrenciesListAdapter.notifyDataSetChanged();
         }
+
     }
 
     void selectSpinnerItemByValue(Spinner spin, String value) {
