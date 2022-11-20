@@ -3,13 +3,6 @@ package com.arturr300.currencyconverter.Views;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.arturr300.currencyconverter.R;
 import com.arturr300.currencyconverter.ViewModels.ConversionResult;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 public class AllCurrenciesFragment extends Fragment {
+    View currentView;
     ExchangeRatesViewModel viewModel;
     AppCompatActivity mainLifecycleOwner;
 
@@ -42,6 +42,10 @@ public class AllCurrenciesFragment extends Fragment {
     //second part
     Spinner spinnerSourceCurrency;
     Spinner spinnerTargetCurrency;
+
+    SourceCurrencyFragment fragmentSource;
+    TargetCurrencyFragment fragmentTarget;
+
     ArrayAdapter<String> spinnerSourceCurrenciesListAdapter;
     ArrayAdapter<String> spinnerTargetCurrenciesListAdapter;
     EditText etSourceCurrencyValue;
@@ -60,20 +64,36 @@ public class AllCurrenciesFragment extends Fragment {
 
     LiveData<ConversionResult> conversionResult;
 
+    private boolean fragmentSourceCurrencyViewCreated = false;
+    private boolean fragmentTargetCurrencyViewCreated = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         df = new DecimalFormat("#.###");
+
+        getChildFragmentManager().setFragmentResultListener(SourceCurrencyFragment.FRAGMENT_REQUEST_KEY, this, (requestKey, result) -> {
+                    if (result.getBoolean(SourceCurrencyFragment.BUNDLE_VIEW_CREATED))
+                        fragmentSourceCurrencyViewCreated = true;
+
+                    checkIfFragmentsViewsAreInitialized();
+                }
+        );
+
+        getChildFragmentManager().setFragmentResultListener(TargetCurrencyFragment.FRAGMENT_REQUEST_KEY, this, (requestKey, result) -> {
+                    if (result.getBoolean(TargetCurrencyFragment.BUNDLE_VIEW_CREATED))
+                        fragmentTargetCurrencyViewCreated = true;
+
+                    checkIfFragmentsViewsAreInitialized();
+                }
+        );
+
+
     }
 
-    void saveSpinnerValue() {
-        String currencySource = spinnerSourceCurrency.getSelectedItem().toString();
-        String currencyTarget = spinnerTargetCurrency.getSelectedItem().toString();
-        SharedPreferences.Editor editor = getActivity().getApplicationContext().
-                getSharedPreferences(settingsFileName, Context.MODE_PRIVATE).edit();
-        editor.putString("currencySource", currencySource);
-        editor.putString("currencyTarget", currencyTarget);
-        editor.apply();
+    private void checkIfFragmentsViewsAreInitialized() {
+        if (fragmentSourceCurrencyViewCreated && fragmentTargetCurrencyViewCreated)
+            assignFragmentsViewsVariables();
     }
 
     @Override
@@ -81,35 +101,12 @@ public class AllCurrenciesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_list_select, container, false);
-        spinnerSourceCurrency = view.findViewById(R.id.fragmentListSelectSpinnerSourceCurrency);
-        spinnerTargetCurrency = view.findViewById(R.id.fragmentListSelectSpinnerTargetCurrency);
-        etSourceCurrencyValue = view.findViewById(R.id.fragmentListSelectEditTextSourceCurrencyValue);
-        etTargetCurrencyValue = view.findViewById(R.id.fragmentListSelectEditTextTargetCurrencyValue);
-        btnClear = view.findViewById(R.id.fragmentListSelectButtonClear);
-        btnConvert = view.findViewById(R.id.fragmentListSelectButtonConvert);
-        btnReverse = view.findViewById(R.id.fragmentListSelectButtonReverse);
+        View view = inflater.inflate(R.layout.fragment_all_currencies, container, false);
 
-        newestCurrenciesRates = new TreeMap<String, Double>();
+        btnClear = view.findViewById(R.id.buttonFragmentClear);
+        btnConvert = view.findViewById(R.id.buttonFragmentConvert);
+        btnReverse = view.findViewById(R.id.buttonFragmentReverse);
 
-        //viewmodel
-        ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(requireActivity().getApplication());
-        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(ExchangeRatesViewModel.class);
-
-        //observe live data objects
-        viewModel.isApiWorking().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                isApiWorking = aBoolean.booleanValue();
-            }
-        });
-        viewModel.getCurrenciesList().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> strings) {
-                currenciesList = strings;
-                fillSpinners();
-            }
-        });
 
         //add button listeners
         btnClear.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +151,36 @@ public class AllCurrenciesFragment extends Fragment {
             }
         });
 
+
+        return view;
+    }
+
+    void saveSpinnerValue() {
+        String currencySource = spinnerSourceCurrency.getSelectedItem().toString();
+        String currencyTarget = spinnerTargetCurrency.getSelectedItem().toString();
+        SharedPreferences.Editor editor = getActivity().getApplicationContext().
+                getSharedPreferences(settingsFileName, Context.MODE_PRIVATE).edit();
+        editor.putString("currencySource", currencySource);
+        editor.putString("currencyTarget", currencyTarget);
+        editor.apply();
+    }
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment childFragment) {
+        if (childFragment instanceof SourceCurrencyFragment)
+            fragmentSource = (SourceCurrencyFragment) childFragment;
+        if (childFragment instanceof TargetCurrencyFragment)
+            fragmentTarget = (TargetCurrencyFragment) childFragment;
+
+        super.onAttachFragment(childFragment);
+    }
+
+    private void assignFragmentsViewsVariables() {
+        spinnerSourceCurrency = fragmentSource.getView().findViewById(R.id.spinnerFragmentCurrency);
+        spinnerTargetCurrency = fragmentTarget.getView().findViewById(R.id.spinnerFragmentCurrency);
+        etSourceCurrencyValue = fragmentSource.getView().findViewById(R.id.etFragmentAmount);
+        etTargetCurrencyValue = fragmentTarget.getView().findViewById(R.id.etFragmentAmount);
+
         AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -172,7 +199,7 @@ public class AllCurrenciesFragment extends Fragment {
                 lastSourceCurrencyInRequest = stringSource; //todo: refactor
                 if (mainLifecycleOwner != null) {
                     viewModel.getCurrencyRate(stringSource,
-                            stringTarget)
+                                    stringTarget)
                             .observe(mainLifecycleOwner, new Observer<CurrenciesRateFetchingResult>() {
                                 @Override
                                 public void onChanged(CurrenciesRateFetchingResult currenciesRateFetchingResult) {
@@ -195,8 +222,35 @@ public class AllCurrenciesFragment extends Fragment {
         };
         spinnerSourceCurrency.setOnItemSelectedListener(onItemSelectedListener);
         spinnerTargetCurrency.setOnItemSelectedListener(onItemSelectedListener);
-        return view;
+
+
+        newestCurrenciesRates = new TreeMap<String, Double>();
+        initViewModel();
+        observeLiveData();
     }
+
+
+    private void initViewModel() {
+        ExchangeRatesViewModelFactory viewModelFactory = new ExchangeRatesViewModelFactory(requireActivity().getApplication());
+        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(ExchangeRatesViewModel.class);
+    }
+
+    private void observeLiveData() {
+        viewModel.isApiWorking().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                isApiWorking = aBoolean.booleanValue();
+            }
+        });
+        viewModel.getCurrenciesList().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> strings) {
+                currenciesList = strings;
+                fillSpinners();
+            }
+        });
+    }
+
 
     void fillRateValue(CurrenciesRateFetchingResult currencyConversionRate) {
         String conversionResultText = Double.toString(currencyConversionRate.rate);
@@ -216,21 +270,22 @@ public class AllCurrenciesFragment extends Fragment {
 
         if (spinnerSourceCurrenciesListAdapter == null || spinnerTargetCurrenciesListAdapter == null) {
             spinnerSourceCurrenciesListAdapter = new ArrayAdapter<>
-                    (getActivity()
-                            .getApplicationContext(),
-                            android.R.layout.simple_spinner_dropdown_item, currenciesList);
+                    (getActivity(),
+                            R.layout.spinner_layout, currenciesList);
+            spinnerSourceCurrenciesListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             spinnerTargetCurrenciesListAdapter = new ArrayAdapter<>
-                    (getActivity()
-                            .getApplicationContext(),
-                            android.R.layout.simple_spinner_dropdown_item, currenciesList);
+                    (getActivity(),
+                            R.layout.spinner_layout, currenciesList);
+            spinnerSourceCurrenciesListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             spinnerSourceCurrency.setAdapter(spinnerSourceCurrenciesListAdapter);
             spinnerTargetCurrency.setAdapter(spinnerTargetCurrenciesListAdapter);
 
+
             SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences(settingsFileName, Context.MODE_PRIVATE);
-            String currencySource = settings.getString("currencySource", "AUD");
-            String currencyTarget = settings.getString("currencyTarget", "AUD");
+            String currencySource = settings.getString("currencySource", "PLN");
+            String currencyTarget = settings.getString("currencyTarget", "EUR");
             selectSpinnerItemByValue(spinnerSourceCurrency, currencySource);
             selectSpinnerItemByValue(spinnerTargetCurrency, currencyTarget);
         } else {
@@ -255,6 +310,7 @@ public class AllCurrenciesFragment extends Fragment {
             });
             spinnerTargetCurrenciesListAdapter.notifyDataSetChanged();
         }
+
     }
 
     void selectSpinnerItemByValue(Spinner spin, String value) {

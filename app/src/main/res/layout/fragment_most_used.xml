@@ -1,124 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".Views.MostUsedCurrenciesFragment">
 
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/textViewUSD"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:text="USD"
+        android:textColor="?attr/myTextColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textViewUSD"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="USD"
-            android:textColor="?attr/myTextColor"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/editTextUSD"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:digits="0123456789."
-            android:ems="5"
-            android:inputType="number" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
+    <EditText
+        android:id="@+id/editTextUSD"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:layout_marginEnd="20dp"
+        android:digits="0123456789."
+        android:ems="5"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewUSD"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textViewUSD" />
 
-        <TextView
-            android:id="@+id/textViewEUR"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:layout_marginTop="32dp"
-            android:text="EUR"
-            android:textColor="?attr/myTextColor"
-            android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/editTextEUR"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:layout_marginStart="29dp"
-            android:digits="0123456789."
-            android:ems="5"
-            android:inputType="number" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/textViewEUR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:text="EUR"
+        android:textColor="?attr/myTextColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewUSD" />
 
-        <TextView
-            android:id="@+id/textViewPLN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:layout_marginTop="29dp"
-            android:text="PLN"
-            android:textColor="?attr/myTextColor"
-            android:textSize="20sp" />
-
-
-        <EditText
-            android:id="@+id/editTextPLN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:layout_marginStart="28dp"
-            android:digits="0123456789."
-            android:ems="5"
-            android:inputType="number" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/editTextEUR"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:digits="0123456789."
+        android:ems="5"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewEUR"
+        app:layout_constraintEnd_toEndOf="@+id/editTextUSD"
+        app:layout_constraintTop_toTopOf="@+id/textViewEUR" />
 
-        <Button
-            android:id="@+id/buttonClear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_marginStart="72dp"
-            android:layout_marginTop="42dp"
-            android:background="?attr/myButtonBackgroundColor"
-            android:layout_weight="1"
-            android:text="@string/btn_clear" />
 
-        <Button
-            android:id="@+id/buttonConvert"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_marginStart="56dp"
-            android:layout_marginTop="42dp"
-            android:background="?attr/myButtonBackgroundColor"
-            android:layout_weight="1"
-            android:text="@string/btn_convert" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/textViewPLN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:text="PLN"
+        android:textColor="?attr/myTextColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEUR" />
 
-</LinearLayout>
+
+    <EditText
+        android:id="@+id/editTextPLN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:digits="0123456789."
+        android:ems="5"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewPLN"
+        app:layout_constraintEnd_toEndOf="@+id/editTextEUR"
+        app:layout_constraintTop_toTopOf="@+id/textViewPLN" />
+
+
+    <Button
+        android:id="@+id/buttonClear"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="?attr/myButtonBackgroundColor"
+        android:padding="@dimen/buttonPadding"
+        android:text="@string/btn_clear"
+        android:textSize="@dimen/buttonTextSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonConvert"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonConvert"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="?attr/myButtonBackgroundColor"
+        android:padding="@dimen/buttonPadding"
+        android:text="@string/btn_convert"
+        android:textSize="@dimen/buttonTextSize"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonClear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonClear" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

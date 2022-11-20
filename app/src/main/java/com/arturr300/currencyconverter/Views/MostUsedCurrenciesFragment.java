@@ -48,8 +48,6 @@ public class MostUsedCurrenciesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         df = new DecimalFormat("#.###");
-
-
     }
 
     @Override

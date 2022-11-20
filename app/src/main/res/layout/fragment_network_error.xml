@@ -6,8 +6,6 @@
     android:orientation="vertical"
     tools:context=".Views.NetworkErrorFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
@@ -33,9 +31,12 @@
         android:id="@+id/buttonRetry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="@dimen/buttonPadding"
+        android:background="?attr/myButtonBackgroundColor"
         android:layout_gravity="center"
         android:layout_marginTop="150dp"
-        android:text="@string/network_error_retry"/>
+        android:text="@string/network_error_retry"
+        android:textSize="@dimen/buttonTextSize"/>
 
 </LinearLayout>
 

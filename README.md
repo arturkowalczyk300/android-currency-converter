@@ -13,4 +13,4 @@
 Download and install CurrencyConverter*.apk file from **Releases** section (*install from unknown sources* option must be enabled in settings of Android system).
 
 # Demo
-<img src="res/CurrencyConverter_LightTheme.gif" alt="Light theme" width="40%" height="40%">
+<img src="res/CurrencyConverter_DarkTheme.gif" alt="Light theme" width="40%" height="40%">
